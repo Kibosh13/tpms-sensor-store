@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProДатчики — датчики давления в шинах</title>
+  <meta name="description" content="Подбор, продажа, установка и программирование датчиков давления в шинах TPMS.">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="theme-color" content="#111214">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="topline">
+    <div class="shell topline__inner">
+      <span><span class="status-dot"></span>Датчики и установка — в наличии</span>
+      <div class="topline__links"><a href="#delivery">Доставка и оплата</a><a href="#contacts">Самовывоз</a></div>
+    </div>
+  </div>
+
+  <header class="header" id="top">
+    <div class="shell header__inner">
+      <a class="brand" href="#top" aria-label="ProДатчики — на главную"><img src="./assets/logo.png" alt="ProДатчики"></a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#selector">Подбор</a>
+        <a href="#catalog">Каталог</a>
+        <a href="#services">Услуги</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <div class="header__actions">
+        <a class="phone" href="tel:+74950000000"><span>Ежедневно 09:00–21:00</span>+7 (495) 000-00-00</a>
+        <button class="cart-button" id="openCart" type="button" aria-label="Открыть корзину">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L20.4 8H6.2M10 20h.01M17 20h.01"/></svg>
+          <span>Корзина</span><b id="cartCount">0</b>
+        </button>
+        <button class="menu-button" id="menuButton" type="button" aria-label="Открыть меню"><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobileNav"><a href="#selector">Подбор</a><a href="#catalog">Каталог</a><a href="#services">Услуги</a><a href="#delivery">Доставка и оплата</a><a href="#contacts">Контакты</a></div>
+  </header>
+
+  <main>
+    <section class="hero" id="selector">
+      <div class="hero-glow"></div>
+      <div class="shell hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">TPMS / ДАТЧИКИ ДАВЛЕНИЯ</p>
+          <h1>Подберём датчики<br>под ваш автомобиль</h1>
+          <p class="hero__lead">Оригинальные и программируемые датчики. Проверим совместимость, установим и пропишем в системе автомобиля.</p>
+          <div class="hero__facts">
+            <div><strong>15 минут</strong><span>подбор по автомобилю</span></div>
+            <div><strong>1 год</strong><span>гарантия на установку</span></div>
+            <div><strong>от 2 990 ₽</strong><span>датчик с программированием</span></div>
+          </div>
+        </div>
+
+        <form class="selector" id="selectorForm">
+          <div class="selector__head">
+            <div><span class="step-label">Быстрый подбор</span><h2>Укажите автомобиль</h2></div>
+            <span class="selector__icon" aria-hidden="true">!</span>
+          </div>
+          <div class="selector__fields">
+            <label><span>Марка</span><select id="carMake" required><option value="">Выберите марку</option><option>Toyota</option><option>BMW</option><option>Mercedes-Benz</option><option>Volkswagen</option><option>Kia</option><option>Hyundai</option><option>Haval</option><option>Geely</option></select></label>
+            <label><span>Модель</span><select id="carModel" required disabled><option value="">Сначала выберите марку</option></select></label>
+            <label><span>Год выпуска</span><select id="carYear" required disabled><option value="">Выберите год</option></select></label>
+            <label><span>Регион поставки</span><select id="carTrim" required disabled><option value="">Выберите регион</option><option value="eu">Россия / Европа</option><option value="us">США / Канада</option><option value="unknown">Не знаю</option></select></label>
+          </div>
+          <button class="primary-button" type="submit">Найти совместимые датчики</button>
+          <p class="selector__note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg> Проверим подбор по VIN перед отправкой</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="compatibility hidden" id="compatibility" aria-live="polite">
+      <div class="shell compatibility__inner">
+        <div class="compatibility__status"><span id="compatibilityIcon">✓</span><div><small id="compatibilityLabel">Совместимость подтверждена каталогом</small><strong id="selectedCar">Toyota Camry, 2021</strong></div></div>
+        <div class="compatibility__details" id="compatibilityDetails"><strong>433 МГц</strong><span>Привязка: OBD</span></div>
+        <a id="compatibilityAction" href="#catalog">Показать подходящие</a>
+      </div>
+    </section>
+
+    <section class="catalog section" id="catalog">
+      <div class="shell">
+        <div class="section-head">
+          <div><p class="eyebrow">КАТАЛОГ</p><h2>Датчики в наличии</h2></div>
+          <div class="filters" role="group" aria-label="Фильтр каталога">
+            <button class="filter active" type="button" data-filter="all">Все</button>
+            <button class="filter" type="button" data-filter="autel">Autel</button>
+            <button class="filter" type="button" data-filter="launch">Launch</button>
+            <button class="filter" type="button" data-filter="original">Оригинальные</button>
+          </div>
+        </div>
+        <div class="catalog-context hidden" id="catalogContext">
+          <div><span class="catalog-context__dot"></span><strong id="catalogVehicle"></strong></div>
+          <p>Подтверждение — по европейскому каталогу Autel MX-Sensor. Launch и оригинальные номера дополнительно проверяем по VIN.</p>
+          <a href="https://autel.com/u/cms/www/202210/24030749wdsc.pdf" target="_blank" rel="noreferrer">Источник ↗</a>
+        </div>
+        <div class="catalog-empty hidden" id="catalogEmpty"><span>!</span><div><h3 id="catalogEmptyTitle"></h3><p id="catalogEmptyText"></p></div><a href="#contacts">Отправить VIN</a></div>
+
+        <div class="product-grid" id="productGrid">
+          <article class="product-card" data-brand="autel">
+            <div class="product-card__visual"><span class="product-badge">Хит</span><img src="./assets/autel-mx.jpg" alt="Датчик Autel MX-Sensor с упаковкой"></div>
+            <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand">AUTEL</div><h3>MX-Sensor 1-Sensor Metal</h3><p>315 / 433 МГц · алюминиевый вентиль</p><div class="stock"><span></span>В наличии</div><div class="product-card__footer"><div><strong>3 490 ₽</strong><small>с программированием</small></div><button class="add-button" type="button" data-name="Autel MX-Sensor Metal" data-price="3490" aria-label="Добавить Autel MX-Sensor Metal">+</button></div></div>
+          </article>
+          <article class="product-card" data-brand="autel">
+            <div class="product-card__visual"><img src="./assets/autel-mx.jpg" alt="Датчик Autel MX-Sensor с резиновым вентилем"></div>
+            <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand">AUTEL</div><h3>MX-Sensor 1-Sensor Rubber</h3><p>315 / 433 МГц · резиновый вентиль</p><div class="stock"><span></span>В наличии</div><div class="product-card__footer"><div><strong>3 190 ₽</strong><small>с программированием</small></div><button class="add-button" type="button" data-name="Autel MX-Sensor Rubber" data-price="3190" aria-label="Добавить Autel MX-Sensor Rubber">+</button></div></div>
+          </article>
+          <article class="product-card" data-brand="launch">
+            <div class="product-card__visual"><span class="product-badge orange">−10%</span><img src="./assets/launch-ltr.jpg" alt="Датчик Launch RF-Sensor с упаковкой"></div>
+            <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand red">LAUNCH</div><h3>RF-Sensor LTR-03 Metal</h3><p>315 / 433 МГц · алюминиевый вентиль</p><div class="stock"><span></span>В наличии</div><div class="product-card__footer"><div><strong>2 990 ₽</strong><small>с программированием</small></div><button class="add-button" type="button" data-name="Launch LTR-03 Metal" data-price="2990" aria-label="Добавить Launch LTR-03 Metal">+</button></div></div>
+          </article>
+          <article class="product-card" data-brand="launch">
+            <div class="product-card__visual"><img src="./assets/launch-ltr.jpg" alt="Датчик Launch RF-Sensor с резиновым вентилем"></div>
+            <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand red">LAUNCH</div><h3>RF-Sensor LTR-03 Rubber</h3><p>315 / 433 МГц · резиновый вентиль</p><div class="stock"><span></span>В наличии</div><div class="product-card__footer"><div><strong>2 790 ₽</strong><small>с программированием</small></div><button class="add-button" type="button" data-name="Launch LTR-03 Rubber" data-price="2790" aria-label="Добавить Launch LTR-03 Rubber">+</button></div></div>
+          </article>
+          <article class="product-card" data-brand="original">
+            <div class="product-card__visual product-card__visual--dark"><span class="product-badge">OEM</span><img src="./assets/autel-mx.jpg" alt="Оригинальный датчик давления в шинах"></div>
+            <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand">ORIGINAL</div><h3>Оригинальный датчик OEM</h3><p>Под заказ по VIN · готов к привязке</p><div class="stock amber"><span></span>1–3 дня</div><div class="product-card__footer"><div><strong>от 5 900 ₽</strong><small>точная цена по VIN</small></div><button class="add-button" type="button" data-name="Оригинальный датчик OEM" data-price="5900" aria-label="Добавить оригинальный датчик">+</button></div></div>
+          </article>
+          <article class="product-card" data-brand="launch">
+            <div class="product-card__visual product-card__visual--dark"><span class="product-badge orange">Комплект</span><img src="./assets/launch-ltr.jpg" alt="Комплект датчиков Launch"></div>
+            <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand red">LAUNCH</div><h3>Комплект LTR-03 × 4</h3><p>4 датчика · программирование включено</p><div class="stock"><span></span>В наличии</div><div class="product-card__footer"><div><strong>10 490 ₽</strong><small>выгода 1 470 ₽</small></div><button class="add-button" type="button" data-name="Комплект Launch LTR-03 × 4" data-price="10490" aria-label="Добавить комплект Launch">+</button></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="services section" id="services">
+      <div class="shell">
+        <div class="section-head light"><div><p class="eyebrow">СЕРВИС</p><h2>Всё сделаем на месте</h2></div><p>Без поездок по разным сервисам: датчик, монтаж и привязка — за один визит.</p></div>
+        <div class="service-grid">
+          <article><span class="service-number">01</span><div class="service-icon">↯</div><h3>Диагностика TPMS</h3><p>Проверим каждый датчик, заряд батареи и ошибки системы.</p><strong>от 500 ₽</strong></article>
+          <article><span class="service-number">02</span><div class="service-icon">⌁</div><h3>Программирование</h3><p>Запишем нужный протокол или клонируем ID старого датчика.</p><strong>от 700 ₽</strong></article>
+          <article><span class="service-number">03</span><div class="service-icon">◉</div><h3>Установка</h3><p>Снимем колесо, установим датчик и проверим герметичность.</p><strong>от 900 ₽</strong></article>
+          <article><span class="service-number">04</span><div class="service-icon">✓</div><h3>Привязка к авто</h3><p>Обучим систему и убедимся, что показания появились на панели.</p><strong>от 1 000 ₽</strong></article>
+        </div>
+        <div class="service-cta"><div><span>Комплексная замена 4 датчиков</span><strong>Подбор → установка → программирование → проверка</strong></div><div class="service-cta__price"><small>работа от</small><b>3 900 ₽</b></div><button class="secondary-button" type="button" data-booking>Записаться в сервис</button></div>
+      </div>
+    </section>
+
+    <section class="delivery section" id="delivery">
+      <div class="shell delivery__grid">
+        <div class="delivery__copy"><p class="eyebrow">ПОЛУЧЕНИЕ ЗАКАЗА</p><h2>Оплата и доставка</h2><p>Выберите удобный способ в корзине. После оформления менеджер подтвердит совместимость датчиков по VIN.</p>
+          <div class="payment-marks"><span>МИР</span><span>VISA</span><span>СБП</span><span>₽</span></div>
+        </div>
+        <div class="delivery__cards">
+          <article><div class="delivery-icon">⌂</div><div><h3>Самовывоз из сервиса</h3><p>Бесплатно · подготовим за 30 минут</p></div><span>0 ₽</span></article>
+          <article><div class="delivery-icon">▱</div><div><h3>Курьер по Москве</h3><p>Сегодня или завтра · интервал 2 часа</p></div><span>от 490 ₽</span></article>
+          <article><div class="delivery-icon">□</div><div><h3>Доставка по России</h3><p>СДЭК или Boxberry · от 2 дней</p></div><span>от 390 ₽</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contacts section" id="contacts">
+      <div class="shell contacts__grid">
+        <div class="contacts__map" aria-label="Схема зоны самовывоза"><div class="road road-a"></div><div class="road road-b"></div><div class="road road-c"></div><div class="map-label label-a">ТТК</div><div class="map-label label-b">Москва</div><div class="map-pin"><span>!</span><b>ProДатчики</b></div></div>
+        <div class="contacts__card"><p class="eyebrow">САМОВЫВОЗ И УСТАНОВКА</p><h2>Приезжайте в наш сервис</h2><div class="contact-row"><span>Адрес</span><strong>Москва, адрес уточняется</strong></div><div class="contact-row"><span>Режим работы</span><strong>Ежедневно, 09:00–21:00</strong></div><div class="contact-row"><span>Телефон</span><strong><a href="tel:+74950000000">+7 (495) 000-00-00</a></strong></div><div class="contact-actions"><button class="primary-button" type="button" data-booking>Записаться</button><a class="text-link" href="tel:+74950000000">Позвонить</a></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="shell footer__inner"><a class="brand brand--footer" href="#top"><img src="./assets/logo.png" alt="ProДатчики"></a><p>Датчики давления в шинах · продажа · установка · программирование</p><div><a href="#catalog">Каталог</a><a href="#delivery">Оплата и доставка</a><a href="#contacts">Контакты</a></div></div><div class="shell footer__bottom"><span>© 2026 ProДатчики</span><span>Информация на сайте не является публичной офертой</span></div></footer>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Корзина">
+    <div class="drawer__head"><div><small>Ваш заказ</small><h2>Корзина</h2></div><button class="close-button" id="closeCart" type="button" aria-label="Закрыть корзину">×</button></div>
+    <div class="cart-items" id="cartItems"><div class="empty-cart"><span>◌</span><h3>Корзина пока пуста</h3><p>Добавьте датчики из каталога — мы проверим их по VIN.</p></div></div>
+    <div class="drawer__footer" id="cartFooter"><div class="cart-total"><span>Итого</span><strong id="cartTotal">0 ₽</strong></div><button class="primary-button" id="checkoutButton" type="button" disabled>Оформить заказ</button><small>Финальную совместимость подтвердит менеджер</small></div>
+  </aside>
+
+  <div class="modal" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle" aria-hidden="true">
+    <button class="close-button modal__close" type="button" data-close-modal aria-label="Закрыть">×</button>
+    <div id="checkoutFormView"><p class="eyebrow">ПОЧТИ ГОТОВО</p><h2 id="checkoutTitle">Оформление заказа</h2><p class="modal__lead">Оставьте контакты — уточним VIN, наличие и удобное время установки.</p><form id="checkoutForm"><label><span>Имя</span><input name="name" type="text" autocomplete="name" placeholder="Алексей" required></label><label><span>Телефон</span><input name="phone" type="tel" autocomplete="tel" placeholder="+7 999 000-00-00" required></label><fieldset><legend>Получение</legend><label class="radio"><input type="radio" name="delivery" value="Самовывоз" checked><span><b>Самовывоз и установка</b><small>Бесплатно</small></span></label><label class="radio"><input type="radio" name="delivery" value="Доставка"><span><b>Доставка</b><small>от 390 ₽</small></span></label></fieldset><fieldset><legend>Оплата</legend><label class="radio"><input type="radio" name="payment" value="Онлайн" checked><span><b>Картой онлайн</b><small>После подтверждения совместимости</small></span></label><label class="radio"><input type="radio" name="payment" value="При получении"><span><b>При получении</b><small>Картой или наличными</small></span></label></fieldset><button class="primary-button" type="submit">Подтвердить заказ</button></form></div>
+    <div class="success-view hidden" id="successView"><div class="success-icon">✓</div><h2>Заказ принят</h2><p>Мы свяжемся с вами в течение 15 минут, проверим датчики по VIN и подтвердим итоговую стоимость.</p><button class="primary-button" type="button" data-close-modal>Понятно</button></div>
+  </div>
+
+  <div class="modal booking-modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="bookingTitle" aria-hidden="true"><button class="close-button modal__close" type="button" data-close-modal aria-label="Закрыть">×</button><p class="eyebrow">ЗАПИСЬ В СЕРВИС</p><h2 id="bookingTitle">Подберём удобное время</h2><p class="modal__lead">Оставьте номер — мастер уточнит автомобиль и согласует визит.</p><form id="bookingForm"><label><span>Телефон</span><input type="tel" name="phone" autocomplete="tel" placeholder="+7 999 000-00-00" required></label><button class="primary-button" type="submit">Перезвоните мне</button></form></div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
