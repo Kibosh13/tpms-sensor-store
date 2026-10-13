@@ -369,6 +369,7 @@ site-header, site-footer { display: block; }
 .decoded-grid strong, .result-specs strong { display: block; font-size: .75rem; }
 .result-specs { grid-template-columns: repeat(3,1fr); }
 .result-reason { margin: 22px 0 0; color: #5f6265; font-size: .82rem; }
+.result-source { margin: 14px 0 0; color: #777a7d; font-size: .66rem; font-weight: 700; }
 .selection-result__actions { display: flex; align-items: center; gap: 15px; margin-top: 24px; }
 .selection-result__actions .primary-button { width: auto; }
 .selection-result__actions > span { color: #73767a; font-size: .66rem; }

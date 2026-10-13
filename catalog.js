@@ -1,7 +1,7 @@
 (function () {
   const PAGE_SIZE = 9;
   const products = window.TPMS_PRODUCTS || [];
-  const state = {search:"", sort:"popular", page:1, type:new Set(), brand:new Set(), frequency:new Set(), availability:new Set()};
+  const state = {search:"", sort:"popular", page:1, vehicle:"", make:"", model:"", year:"", verified:false, type:new Set(), brand:new Set(), frequency:new Set(), availability:new Set()};
   const money = value => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
   const plural = count => count % 10 === 1 && count % 100 !== 11 ? "товар" : [2,3,4].includes(count % 10) && ![12,13,14].includes(count % 100) ? "товара" : "товаров";
 
@@ -16,7 +16,12 @@
       if (input) input.checked = true;
     }
     const vehicle = params.get("vehicle");
-    if (vehicle) document.querySelector("#catalogSelectionNote").textContent = `Подбор для: ${vehicle}`;
+    state.vehicle = vehicle || "";
+    state.make = params.get("make") || "";
+    state.model = params.get("model") || "";
+    state.year = params.get("year") || "";
+    state.verified = params.get("verified") === "1";
+    if (vehicle) document.querySelector("#catalogSelectionNote").textContent = `${state.verified ? "Совместимые варианты" : "Подбор"} для: ${vehicle}`;
   }
 
   function matches(product) {
@@ -25,6 +30,7 @@
     if (state.type.size && !state.type.has(product.type)) return false;
     if (state.brand.size && !state.brand.has(product.brand)) return false;
     if (state.frequency.size && ![...state.frequency].some(value => product.frequency.includes(Number(value)))) return false;
+    if (state.make && ["sensor","kit","oem"].includes(product.type) && !product.coverage.includes("*") && !product.coverage.includes(state.make)) return false;
     if (state.availability.has("stock") && !state.availability.has("order") && product.stock < 1) return false;
     if (state.availability.has("order") && !state.availability.has("stock") && product.stock > 0) return false;
     return true;
@@ -42,9 +48,10 @@
   function productCard(product) {
     const freq = product.frequency.length ? `${product.frequency.join(" / ")} МГц` : product.valve === "metal" ? "Металлический вентиль" : "Резиновый вентиль";
     const stock = product.stock > 0 ? `<span class="stock"><i></i>В наличии · ${product.stock} шт.</span>` : `<span class="stock amber"><i></i>Под заказ</span>`;
-    return `<article class="product-card catalog-card">
+    const compatibility = state.verified && state.make ? `<div class="match-note match-note--verified">Вариант для ${state.vehicle}</div>` : "";
+    return `<article class="product-card catalog-card${compatibility ? " product-card--verified" : ""}">
       <a class="product-card__visual${product.type === "oem" ? " product-card__visual--dark" : ""}" href="product.html?id=${encodeURIComponent(product.id)}">${product.badge ? `<span class="product-badge${product.brand === "Launch" ? " orange" : ""}">${product.badge}</span>` : ""}<img src="${product.image}" alt="${product.title}" loading="lazy"></a>
-      <div class="product-card__body"><div class="product-brand${product.brand === "Launch" ? " red" : ""}">${product.brand} · ${product.sku}</div><h3><a href="product.html?id=${encodeURIComponent(product.id)}">${product.title}</a></h3><p>${freq} · ${product.valve === "metal" ? "алюминиевый" : "резиновый"}</p>${stock}<div class="product-card__footer"><div><strong>${money(product.price)}</strong><small>${product.type === "sensor" || product.type === "kit" ? "программирование включено" : "за 1 шт."}</small></div><button class="add-button" data-product-id="${product.id}" type="button" aria-label="Добавить ${product.title}">+</button></div></div>
+      <div class="product-card__body">${compatibility}<div class="product-brand${product.brand === "Launch" ? " red" : ""}">${product.brand} · ${product.sku}</div><h3><a href="product.html?id=${encodeURIComponent(product.id)}">${product.title}</a></h3><p>${freq} · ${product.valve === "metal" ? "алюминиевый" : "резиновый"}</p>${stock}<div class="product-card__footer"><div><strong>${money(product.price)}</strong><small>${product.type === "sensor" || product.type === "kit" ? "программирование включено" : "за 1 шт."}</small></div><button class="add-button" data-product-id="${product.id}" type="button" aria-label="Добавить ${product.title}">+</button></div></div>
     </article>`;
   }
 

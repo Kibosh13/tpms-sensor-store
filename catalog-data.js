@@ -20,3 +20,13 @@ window.TPMS_PRODUCTS = [
   {id:"service-kit-metal", sku:"KIT-VLV-M", brand:"ProДатчики", title:"Сервисный комплект вентиля", type:"accessory", frequency:[], valve:"metal", price:390, image:"./assets/autel-mx.jpg", stock:60, description:"Гайка, шайба, золотник и защитный колпачок для обслуживания вентиля."},
   {id:"service-kit-rubber", sku:"KIT-VLV-R", brand:"ProДатчики", title:"Сервисный комплект резинового вентиля", type:"accessory", frequency:[], valve:"rubber", price:290, image:"./assets/launch-ltr.jpg", stock:55, description:"Комплект расходных элементов для резинового вентиля TPMS."}
 ];
+
+const productCoverage = {
+  "autel-mx-metal":["*"], "autel-mx-rubber":["*"], "autel-mx-4pack-metal":["*"], "autel-mx-4pack-rubber":["*"],
+  "launch-ltr03-metal":["*"], "launch-ltr03-rubber":["*"], "launch-ltr03-kit":["*"], "launch-crt511-kit":["*"],
+  "huf-uvs4040":["BMW","Mercedes-Benz","Volkswagen"], "huf-uvs7050":["BMW","Mercedes-Benz","Volkswagen"],
+  "schrader-ez433":["Toyota","BMW","Mercedes-Benz","Kia","Hyundai","Haval","Geely"], "schrader-ez315":["Honda","Toyota","BMW","Mercedes-Benz","Volkswagen","Kia","Hyundai"],
+  "oem-toyota-42607":["Toyota"], "oem-bmw-361068":["BMW"], "oem-vag-5q0907":["Volkswagen"]
+};
+
+window.TPMS_PRODUCTS.forEach(product => { product.coverage = productCoverage[product.id] || []; });

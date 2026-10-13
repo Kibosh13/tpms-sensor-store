@@ -7,6 +7,7 @@
   const result = document.querySelector("#selectionResult");
 
   const escapeHtml = value => String(value || "").replace(/[&<>"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[char]);
+  const wmiMakes = {JTD:"Toyota",JTN:"Toyota","4T1":"Toyota","5TD":"Toyota",WBA:"BMW",WBS:"BMW",WBY:"BMW",WDB:"Mercedes-Benz",WDC:"Mercedes-Benz",WDD:"Mercedes-Benz",WVW:"Volkswagen",WVG:"Volkswagen",KNA:"Kia",KND:"Kia",KNM:"Kia",KMH:"Hyundai",TMA:"Hyundai",JHM:"Honda","1HG":"Honda","2HG":"Honda",LGW:"Haval",L6T:"Geely"};
 
   function setupVehicleForm() {
     make.innerHTML += Object.keys(window.VehicleData.catalog).map(value => `<option>${value}</option>`).join("");
@@ -24,7 +25,7 @@
     document.querySelector("#vehicleForm").addEventListener("submit", event => {
       event.preventDefault();
       const match = window.VehicleData.lookup(make.value, model.value, Number(year.value), region.value);
-      renderCompatibility({vehicle:`${make.value} ${model.value}, ${year.value}`, match, source:"vehicle"});
+      renderCompatibility({vehicle:`${make.value} ${model.value}, ${year.value}`, match, source:"vehicle", selection:{make:make.value,model:model.value,year:Number(year.value)}});
     });
   }
 
@@ -73,28 +74,41 @@
 
   function matchForVin(decoded, vin) {
     const vehicle = localVehicle(decoded);
-    if (!vehicle.make || !vehicle.model || !vehicle.year) return {status:"manual",reason:"VIN распознан, но модели нет во внутренней матрице TPMS. Нужна сверка по профессиональному каталогу применяемости."};
+    const errorCodes = String(decoded.ErrorCode || "0").split(",").map(code => code.trim()).filter(code => code && code !== "0");
+    if (errorCodes.length) return {status:"manual",reason:"Декодер вернул неполные или противоречивые данные. Для этого VIN требуется ручная сверка по каталогу применяемости.",vehicleData:vehicle,evidence:"vin-warning"};
+    const tpms = String(decoded.TPMS || "").toLowerCase();
+    if (tpms.includes("indirect")) return {status:"indirect",system:"indirect",frequency:null,relearn:"калибровка через меню автомобиля",oem:"ABS",vehicleData:vehicle,evidence:"vpic"};
+    if (!vehicle.make || !vehicle.model || !vehicle.year) {
+      const knownType = tpms.includes("direct") ? "Декодер подтверждает прямую систему TPMS, но " : "";
+      return {status:"manual",reason:`${knownType}модели нет во внутренней матрице. Нужна сверка протокола и OE-номера по профессиональному каталогу.`,vehicleData:vehicle,evidence:tpms ? "vpic" : "partial"};
+    }
     const market = /^[1-5]/.test(vin) ? "us" : "eu";
-    return window.VehicleData.lookup(vehicle.make, vehicle.model, vehicle.year, market);
+    const matrixMatch = window.VehicleData.lookup(vehicle.make, vehicle.model, vehicle.year, market);
+    if (!tpms.includes("direct")) {
+      return {status:"manual",reason:"VIN распознан, но декодер не подтвердил тип TPMS. Сверим прямую или косвенную систему по комплектации.",candidate:matrixMatch,vehicleData:vehicle,evidence:"partial"};
+    }
+    if (matrixMatch.status === "confirmed") return {...matrixMatch,vehicleData:vehicle,evidence:"vpic+matrix"};
+    return {...matrixMatch,vehicleData:vehicle,evidence:"vpic+matrix"};
   }
 
-  function resultActions(match, vehicle) {
+  function resultActions(match, vehicle, selection) {
     if (match.status === "confirmed") {
-      const params = new URLSearchParams({frequency:String(match.frequency), vehicle});
+      const params = new URLSearchParams({frequency:String(match.frequency),vehicle,make:selection?.make || "",model:selection?.model || "",year:String(selection?.year || ""),verified:"1"});
       return `<a class="primary-button" href="catalog.html?${params}">Показать подходящие датчики</a>`;
     }
     if (match.status === "indirect") return `<a class="primary-button" href="services.html">Диагностика системы</a>`;
     return `<a class="primary-button" href="contacts.html?request=vin">Отправить VIN специалисту</a>`;
   }
 
-  function renderCompatibility({vehicle, match, source, decoded, vin}) {
+  function renderCompatibility({vehicle, match, source, decoded, vin, selection}) {
     const confirmed = match.status === "confirmed";
     const indirect = match.status === "indirect";
     const label = confirmed ? "Совместимость подтверждена" : indirect ? "Датчики в колёсах не нужны" : match.status === "ambiguous" ? "Нужна проверка комплектации" : "Нужна ручная сверка";
     const detail = confirmed ? `<div class="result-specs"><div><span>Частота</span><strong>${match.frequency} МГц</strong></div><div><span>Прописка</span><strong>${escapeHtml(match.relearn)}</strong></div><div><span>Штатный производитель</span><strong>${escapeHtml(match.oem)}</strong></div></div>` : indirect ? `<p class="result-reason">В автомобиле используется косвенная система через ABS. Радиодатчики покупать не нужно.</p>` : `<p class="result-reason">${escapeHtml(match.reason)}</p>`;
-    const decodedInfo = decoded ? `<div class="decoded-grid"><div><span>Марка</span><strong>${escapeHtml(decoded.Make || "Не определена")}</strong></div><div><span>Модель</span><strong>${escapeHtml(decoded.Model || "Не определена")}</strong></div><div><span>Год</span><strong>${escapeHtml(decoded.ModelYear || modelYearFromVin(vin) || "Не определён")}</strong></div><div><span>Страна производства</span><strong>${escapeHtml(decoded.PlantCountry || "Не указана")}</strong></div></div>` : "";
+    const decodedInfo = decoded ? `<div class="decoded-grid"><div><span>Марка</span><strong>${escapeHtml(decoded.Make || "Не определена")}</strong></div><div><span>Модель</span><strong>${escapeHtml(decoded.Model || "Не определена")}</strong></div><div><span>Год</span><strong>${escapeHtml(decoded.ModelYear || modelYearFromVin(vin) || "Не определён")}</strong></div><div><span>Тип TPMS</span><strong>${escapeHtml(decoded.TPMS === "Direct" ? "Прямая система" : decoded.TPMS === "Indirect" ? "Косвенная система" : "Не определён")}</strong></div><div><span>Страна производства</span><strong>${escapeHtml(decoded.PlantCountry || "Не указана")}</strong></div></div>` : "";
+    const evidence = source === "vin" ? `<p class="result-source">${match.evidence === "vpic+matrix" ? "Источник решения: VIN-декодер + матрица применимости TPMS" : match.evidence === "vpic" ? "Источник решения: тип TPMS из VIN-декодера" : "Данных VIN недостаточно для автоматического выбора товара"}</p>` : "";
     result.className = `selection-result selection-result--${confirmed ? "ok" : indirect ? "info" : "manual"}`;
-    result.innerHTML = `<div class="selection-result__head"><span>${confirmed ? "✓" : indirect ? "i" : "?"}</span><div><small>${source === "vin" ? "Результат проверки VIN" : "Результат подбора"}</small><h2>${label}</h2><p>${escapeHtml(vehicle)}</p></div></div>${decodedInfo}${detail}<div class="selection-result__actions">${resultActions(match, vehicle)}<span>${confirmed ? "До оплаты ещё раз сверим OE-номер по полному VIN." : "Случайные товары не показываем."}</span></div>`;
+    result.innerHTML = `<div class="selection-result__head"><span>${confirmed ? "✓" : indirect ? "i" : "?"}</span><div><small>${source === "vin" ? "Результат проверки VIN" : "Результат подбора"}</small><h2>${label}</h2><p>${escapeHtml(vehicle)}</p></div></div>${decodedInfo}${detail}${evidence}<div class="selection-result__actions">${resultActions(match, vehicle, selection || match.vehicleData)}<span>${confirmed ? "До оплаты ещё раз сверим OE-номер по полному VIN." : "Случайные товары не показываем."}</span></div>`;
     result.classList.remove("hidden");
     result.scrollIntoView({behavior:"smooth",block:"nearest"});
   }
@@ -108,9 +122,17 @@
       const payload = await response.json();
       const decoded = payload.Results?.[0];
       if (!decoded) throw new Error("Декодер не вернул данные");
-      if (!decoded.Make && !decoded.Manufacturer) throw new Error("Не удалось определить производителя по этому VIN");
-      return decoded;
+      return enrichDecoded(decoded, vin);
     } finally { clearTimeout(timer); }
+  }
+
+  function enrichDecoded(decoded, vin) {
+    const fallbackMake = wmiMakes[vin.slice(0,3)] || "";
+    return {...decoded,Make:decoded.Make || fallbackMake,ModelYear:decoded.ModelYear || String(modelYearFromVin(vin) || ""),DecodeSource:decoded.Make ? "vpic" : fallbackMake ? "wmi" : "partial"};
+  }
+
+  function localDecode(vin) {
+    return enrichDecoded({Make:"",Model:"",ModelYear:"",PlantCountry:"",TPMS:"",ErrorCode:"local"}, vin);
   }
 
   function setupVinForm() {
@@ -140,11 +162,13 @@
         const vehicle = [decoded.Make,decoded.Model,decoded.ModelYear].filter(Boolean).join(" ");
         const match = matchForVin(decoded, vin);
         sessionStorage.setItem("tpms-vin-selection", JSON.stringify({vin,vehicle,decodedAt:Date.now()}));
-        renderCompatibility({vehicle:vehicle || `VIN …${vin.slice(-6)}`,match,source:"vin",decoded,vin});
+        renderCompatibility({vehicle:vehicle || `VIN …${vin.slice(-6)}`,match,source:"vin",decoded,vin,selection:match.vehicleData});
       } catch (requestError) {
-        result.className = "selection-result selection-result--manual";
-        result.innerHTML = `<div class="selection-result__head"><span>!</span><div><small>Декодер недоступен</small><h2>Не удалось проверить VIN автоматически</h2><p>${escapeHtml(requestError.name === "AbortError" ? "Сервис не ответил вовремя." : requestError.message)}</p></div></div><div class="selection-result__actions"><a class="primary-button" href="contacts.html?request=vin">Отправить VIN специалисту</a><span>Товар без проверки не предлагаем.</span></div>`;
-        sessionStorage.setItem("tpms-vin-selection", JSON.stringify({vin,vehicle:"",decodedAt:Date.now()}));
+        const decoded = localDecode(vin);
+        const vehicle = [decoded.Make,decoded.ModelYear].filter(Boolean).join(" ") || `VIN …${vin.slice(-6)}`;
+        const match = {status:"manual",reason:"Онлайн-декодер временно недоступен. Мы определили доступные данные локально, но для выбора датчика нужна ручная сверка.",vehicleData:localVehicle(decoded),evidence:"partial"};
+        sessionStorage.setItem("tpms-vin-selection", JSON.stringify({vin,vehicle,decodedAt:Date.now()}));
+        renderCompatibility({vehicle,match,source:"vin",decoded,vin,selection:match.vehicleData});
       } finally { button.disabled = false; button.textContent = "Расшифровать VIN"; }
     });
   }
@@ -160,7 +184,7 @@
       year.value = params.get("year"); year.dispatchEvent(new Event("change"));
       region.value = params.get("region");
       const match = window.VehicleData.lookup(make.value, model.value, Number(year.value), region.value);
-      renderCompatibility({vehicle:`${make.value} ${model.value}, ${year.value}`, match, source:"vehicle"});
+      renderCompatibility({vehicle:`${make.value} ${model.value}, ${year.value}`, match, source:"vehicle", selection:{make:make.value,model:model.value,year:Number(year.value)}});
     }
   });
 })();

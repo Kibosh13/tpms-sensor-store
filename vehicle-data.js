@@ -27,7 +27,7 @@
       Coolray:[direct(2019,2026,433,"OBD","Baolong")], Monjaro:[direct(2021,2026,433,"OBD","Baolong")], Atlas:[direct(2015,2026,433,"OBD","Dias / Schrader / Baolong")], Tugella:[direct(2020,2026,433,"OBD","Baolong")]
     },
     Honda: {
-      Accord:[direct(2008,2026,315,"OBD / автоматически","TRW / Pacific")], Civic:[direct(2008,2026,315,"OBD / автоматически","TRW / Pacific")], "CR-V":[direct(2007,2026,315,"OBD / автоматически","TRW / Pacific")]
+      Accord:[direct(2008,2012,315,"OBD / автоматически","TRW / Pacific"),indirect(2013,2026)], Civic:[direct(2008,2013,315,"OBD / автоматически","TRW / Pacific"),indirect(2014,2026)], "CR-V":[direct(2007,2013,315,"OBD / автоматически","TRW / Pacific"),indirect(2014,2026)]
     }
   };
 
