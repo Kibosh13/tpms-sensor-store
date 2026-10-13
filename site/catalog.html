@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Каталог датчиков TPMS — ProДатчики</title>
+  <meta name="description" content="Каталог датчиков давления в шинах: Autel, Launch, Huf, Schrader и оригинальные датчики. Поиск, фильтры и подбор по автомобилю.">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="theme-color" content="#111214">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./common.js" defer></script><script src="./catalog-data.js" defer></script><script src="./catalog.js" defer></script>
+</head>
+<body class="page-light">
+  <site-header active="catalog"></site-header>
+  <main>
+    <section class="page-hero page-hero--compact">
+      <div class="shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="index.html">Главная</a><span>/</span><span>Каталог</span></nav><p class="eyebrow">КАТАЛОГ TPMS</p><h1>Датчики и комплектующие</h1><p>Ищите по названию или артикулу, отфильтруйте частоту и бренд. Для точной совместимости сначала выберите автомобиль или проверьте VIN.</p><a class="inline-cta" href="selection.html">Подобрать по автомобилю или VIN →</a></div>
+    </section>
+
+    <section class="catalog-page section">
+      <div class="shell">
+        <div class="catalog-toolbar">
+          <label class="search-field"><span class="sr-only">Поиск по каталогу</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="catalogSearch" type="search" placeholder="Название, бренд или артикул" autocomplete="off"></label>
+          <label class="sort-field"><span>Сортировка</span><select id="catalogSort"><option value="popular">Сначала популярные</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option><option value="title">По названию</option></select></label>
+          <button class="filter-drawer-button" id="filterDrawerButton" type="button">Фильтры</button>
+        </div>
+
+        <div class="catalog-layout">
+          <aside class="catalog-sidebar" id="catalogSidebar" aria-label="Фильтры каталога">
+            <div class="filter-panel__head"><strong>Фильтры</strong><button id="closeFilters" type="button" aria-label="Закрыть фильтры">×</button></div>
+            <fieldset><legend>Тип товара</legend><label><input type="checkbox" name="type" value="sensor"> Датчики</label><label><input type="checkbox" name="type" value="kit"> Комплекты</label><label><input type="checkbox" name="type" value="oem"> Оригинальные</label><label><input type="checkbox" name="type" value="valve"> Вентили</label><label><input type="checkbox" name="type" value="accessory"> Комплектующие</label></fieldset>
+            <fieldset><legend>Производитель</legend><label><input type="checkbox" name="brand" value="Autel"> Autel</label><label><input type="checkbox" name="brand" value="Launch"> Launch</label><label><input type="checkbox" name="brand" value="Huf"> Huf</label><label><input type="checkbox" name="brand" value="Schrader"> Schrader</label><label><input type="checkbox" name="brand" value="OEM"> OEM</label></fieldset>
+            <fieldset><legend>Частота</legend><label><input type="checkbox" name="frequency" value="433"> 433 МГц</label><label><input type="checkbox" name="frequency" value="315"> 315 МГц</label></fieldset>
+            <fieldset><legend>Наличие</legend><label><input type="checkbox" name="availability" value="stock"> В наличии</label><label><input type="checkbox" name="availability" value="order"> Под заказ</label></fieldset>
+            <button class="reset-filters" id="resetFilters" type="button">Сбросить фильтры</button>
+          </aside>
+
+          <div class="catalog-results">
+            <div class="catalog-summary"><div><strong id="catalogCount">0 товаров</strong><span id="catalogSelectionNote">Показан весь каталог</span></div><div class="active-chips" id="activeChips"></div></div>
+            <div class="catalog-product-grid" id="catalogProductGrid" aria-live="polite"></div>
+            <div class="catalog-no-results hidden" id="catalogNoResults"><span>⌕</span><h2>Ничего не нашли</h2><p>Измените запрос или сбросьте часть фильтров.</p><button class="primary-button" id="emptyReset" type="button">Показать все товары</button></div>
+            <nav class="pagination" id="catalogPagination" aria-label="Страницы каталога"></nav>
+          </div>
+        </div>
+
+        <section class="catalog-scale-note"><div><span>1000+</span><div><strong>Каталог готов к росту</strong><p>Поиск, фильтры и пагинация работают с единым массивом товаров. На боевом сайте данные можно подключить к CMS или 1С без изменения интерфейса.</p></div></div><a href="contacts.html">Запросить товар по артикулу</a></section>
+      </div>
+    </section>
+  </main>
+  <site-footer></site-footer>
+</body>
+</html>

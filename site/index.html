@@ -17,18 +17,18 @@
   <div class="topline">
     <div class="shell topline__inner">
       <span><span class="status-dot"></span>Датчики и программирование — в наличии</span>
-      <div class="topline__links"><a href="#delivery">Доставка и оплата</a><a href="#contacts">Самовывоз</a></div>
+      <div class="topline__links"><a href="delivery.html">Доставка и оплата</a><a href="contacts.html">Самовывоз</a></div>
     </div>
   </div>
 
   <header class="header" id="top">
     <div class="shell header__inner">
-      <a class="brand" href="#top" aria-label="ProДатчики — на главную"><img src="./assets/logo-clean.png" alt="ProДатчики"></a>
+      <a class="brand" href="index.html" aria-label="ProДатчики — на главную"><img src="./assets/logo-clean.png" alt="ProДатчики"></a>
       <nav class="nav" aria-label="Основная навигация">
-        <a href="#selector">Подбор</a>
-        <a href="#catalog">Каталог</a>
-        <a href="#services">Услуги</a>
-        <a href="#contacts">Контакты</a>
+        <a href="selection.html">Подбор</a>
+        <a href="catalog.html">Каталог</a>
+        <a href="services.html">Услуги</a>
+        <a href="contacts.html">Контакты</a>
       </nav>
       <div class="header__actions">
         <a class="phone" href="tel:+74950000000"><span>Ежедневно 09:00–21:00</span>+7 (495) 000-00-00</a>
@@ -39,7 +39,7 @@
         <button class="menu-button" id="menuButton" type="button" aria-label="Открыть меню"><span></span><span></span></button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobileNav"><a href="#selector">Подбор</a><a href="#catalog">Каталог</a><a href="#services">Услуги</a><a href="#delivery">Доставка и оплата</a><a href="#contacts">Контакты</a></div>
+    <div class="mobile-nav" id="mobileNav"><a href="selection.html">Подбор</a><a href="catalog.html">Каталог</a><a href="services.html">Услуги</a><a href="delivery.html">Доставка и оплата</a><a href="contacts.html">Контакты</a></div>
   </header>
 
   <main>
@@ -68,8 +68,8 @@
             <label><span>Год выпуска</span><select id="carYear" required disabled><option value="">Выберите год</option></select></label>
             <label><span>Регион поставки</span><select id="carTrim" required disabled><option value="">Выберите регион</option><option value="eu">Россия / Европа</option><option value="us">США / Канада</option><option value="unknown">Не знаю</option></select></label>
           </div>
-          <button class="primary-button" type="submit">Найти совместимые датчики</button>
-          <p class="selector__note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg> Финально сверим совместимость по VIN</p>
+          <button class="primary-button" type="submit">Продолжить точный подбор</button>
+          <p class="selector__note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg> <a href="selection.html#vin">Отдельный подбор по VIN</a></p>
         </form>
       </div>
     </section>
@@ -78,14 +78,14 @@
       <div class="shell compatibility__inner">
         <div class="compatibility__status"><span id="compatibilityIcon">✓</span><div><small id="compatibilityLabel">Совместимость подтверждена каталогом</small><strong id="selectedCar">Toyota Camry, 2021</strong></div></div>
         <div class="compatibility__details" id="compatibilityDetails"><strong>433 МГц</strong><span>Привязка: OBD</span></div>
-        <a id="compatibilityAction" href="#catalog">Показать подходящие</a>
+        <a id="compatibilityAction" href="catalog.html">Показать подходящие</a>
       </div>
     </section>
 
     <section class="catalog section" id="catalog">
       <div class="shell">
         <div class="section-head">
-          <div><p class="eyebrow">КАТАЛОГ</p><h2>Датчики в наличии</h2></div>
+          <div><p class="eyebrow">ПОПУЛЯРНЫЕ ТОВАРЫ</p><h2>Датчики в наличии</h2></div>
           <div class="filters" role="group" aria-label="Фильтр каталога">
             <button class="filter active" type="button" data-filter="all">Все</button>
             <button class="filter" type="button" data-filter="autel">Autel</button>
@@ -98,7 +98,7 @@
           <p>Подтверждение — по европейскому каталогу Autel MX-Sensor. Launch и оригинальные номера дополнительно проверяем по VIN.</p>
           <a href="https://autel.com/u/cms/www/202210/24030749wdsc.pdf" target="_blank" rel="noreferrer">Источник ↗</a>
         </div>
-        <div class="catalog-empty hidden" id="catalogEmpty"><span>!</span><div><h3 id="catalogEmptyTitle"></h3><p id="catalogEmptyText"></p></div><a href="#contacts">Отправить VIN</a></div>
+        <div class="catalog-empty hidden" id="catalogEmpty"><span>!</span><div><h3 id="catalogEmptyTitle"></h3><p id="catalogEmptyText"></p></div><a href="selection.html#vin">Проверить VIN</a></div>
 
         <div class="product-grid" id="productGrid">
           <article class="product-card" data-brand="autel">
@@ -126,6 +126,7 @@
             <div class="product-card__body"><div class="match-note hidden"></div><div class="product-brand red">LAUNCH</div><h3>Комплект LTR-03 × 4</h3><p>4 датчика · программирование включено</p><div class="stock"><span></span>В наличии</div><div class="product-card__footer"><div><strong>10 490 ₽</strong><small>выгода 1 470 ₽</small></div><button class="add-button" type="button" data-name="Комплект Launch LTR-03 × 4" data-price="10490" aria-label="Добавить комплект Launch">+</button></div></div>
           </article>
         </div>
+        <div class="home-section-link"><a class="primary-button" href="catalog.html">Открыть полный каталог</a><span>Поиск, фильтры, сортировка и отдельные страницы товаров</span></div>
       </div>
     </section>
 
@@ -163,7 +164,7 @@
     </section>
   </main>
 
-  <footer class="footer"><div class="shell footer__inner"><a class="brand brand--footer" href="#top"><img src="./assets/logo-clean.png" alt="ProДатчики"></a><p>Датчики давления в шинах · продажа · диагностика · программирование</p><div><a href="#catalog">Каталог</a><a href="#delivery">Оплата и доставка</a><a href="#contacts">Контакты</a></div></div><div class="shell footer__bottom"><span>© 2026 ProДатчики</span><span>Информация на сайте не является публичной офертой</span></div></footer>
+  <footer class="footer"><div class="shell footer__inner"><a class="brand brand--footer" href="index.html"><img src="./assets/logo-clean.png" alt="ProДатчики"></a><p>Датчики давления в шинах · продажа · диагностика · программирование</p><div><a href="catalog.html">Каталог</a><a href="delivery.html">Оплата и доставка</a><a href="contacts.html">Контакты</a></div></div><div class="shell footer__bottom"><span>© 2026 ProДатчики</span><span>Информация на сайте не является публичной офертой</span></div></footer>
 
   <div class="overlay" id="overlay"></div>
   <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Корзина">
