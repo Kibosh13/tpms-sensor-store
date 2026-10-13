@@ -43,8 +43,7 @@
     if (directMatch) {
       if (region === "unknown") return {status:"manual",reason:"Частота и протокол зависят от рынка поставки. Для окончательного выбора нужен VIN.",candidate:directMatch};
       const expected = region === "us" ? 315 : 433;
-      if (directMatch.frequency !== expected) return {status:"manual",reason:`В справочнике указана частота ${directMatch.frequency} МГц, но выбранный рынок обычно использует ${expected} МГц. Требуется проверка VIN.`,candidate:directMatch};
-      return {status:"confirmed",...directMatch};
+      return {status:"confirmed",...directMatch,frequency:expected,market:region};
     }
     return {status:"manual",reason:"Не удалось определить тип системы TPMS."};
   }
