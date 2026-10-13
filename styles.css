@@ -338,6 +338,7 @@ site-header, site-footer { display: block; }
 .vin-input-wrap input { height: 64px; padding-right: 78px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.25rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
 .vin-input-wrap span { position: absolute; right: 16px; top: 22px; color: #8b8d90; font-size: .7rem; }
 .vin-form .primary-button { margin-top: 15px; }
+.vin-region { display: block; margin-top: 15px; }.vin-region > span { display: block; margin-bottom: 7px; color: #63666a; font-size: .72rem; font-weight: 700; }.vin-region small { display: block; margin-top: 6px; color: #818387; font-size: .64rem; }
 .field-error { margin: 8px 0 0; color: #bc2d23; font-size: .72rem; font-weight: 700; }
 .vin-privacy { display: flex; gap: 12px; margin-top: 20px; border-radius: 12px; background: #ecece7; padding: 14px; }
 .vin-privacy > span { color: #777000; font-size: 1.2rem; }
