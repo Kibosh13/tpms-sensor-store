@@ -58,7 +58,8 @@ function indirect(from, to) {
 }
 
 const money = value => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
-const cart = [];
+const CART_KEY = "prodatchiki-cart-v2";
+const cart = (() => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (_) { return []; } })();
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const make = $("#carMake");
@@ -143,19 +144,19 @@ function updateCompatibility(match) {
     label.textContent = "Совместимость подтверждена каталогом";
     details.innerHTML = `<strong>${match.frequency}</strong><span>Привязка: ${match.relearn}</span><span>Штатный производитель: ${match.oem}</span>`;
     action.textContent = "Показать подходящие";
-    action.href = "#catalog";
+    action.href = `catalog.html?${new URLSearchParams({frequency:String(match.frequency),vehicle:$("#selectedCar").textContent})}`;
   } else if (match.status === "indirect") {
     icon.textContent = "i";
     label.textContent = "Косвенная система TPMS";
     details.innerHTML = `<strong>Датчики в колёсах не нужны</strong><span>Давление контролируется по скорости вращения колёс через ABS.</span>`;
     action.textContent = "Диагностика системы";
-    action.href = "#services";
+    action.href = "services.html";
   } else {
     icon.textContent = "?";
     label.textContent = match.status === "ambiguous" ? "Нужна проверка комплектации" : "Нужна проверка по VIN";
     details.innerHTML = `<strong>Не показываем случайные датчики</strong><span>${match.reason}</span>`;
     action.textContent = "Проверить по VIN";
-    action.href = "#contacts";
+    action.href = "selection.html#vin";
   }
 }
 
@@ -217,7 +218,9 @@ function runSelection({scroll = true} = {}) {
 
 $("#selectorForm").addEventListener("submit", event => {
   event.preventDefault();
-  runSelection();
+  if (!make.value || !model.value || !year.value || !region.value) return;
+  const params = new URLSearchParams({make:make.value, model:model.value, year:year.value, region:region.value});
+  location.href = `selection.html?${params}`;
 });
 
 function applyBrandFilter() {
@@ -236,15 +239,15 @@ $$('.filter').forEach(button => button.addEventListener("click", () => {
 }));
 
 function renderCart() {
-  $("#cartCount").textContent = cart.length;
-  $("#cartTotal").textContent = money(cart.reduce((sum, item) => sum + item.price, 0));
+  $("#cartCount").textContent = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  $("#cartTotal").textContent = money(cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0));
   $("#checkoutButton").disabled = cart.length === 0;
   if (!cart.length) {
     $("#cartItems").innerHTML = `<div class="empty-cart"><span>◌</span><h3>Корзина пока пуста</h3><p>Сначала подберите автомобиль — мы покажем статус совместимости.</p></div>`;
     return;
   }
-  $("#cartItems").innerHTML = cart.map((item, index) => `<div class="cart-item"><div><h3>${item.name}</h3><p>1 шт. · ${item.vehicle || "совместимость проверим по VIN"}</p></div><div class="cart-item__right"><strong>${money(item.price)}</strong><button class="remove-item" data-index="${index}" type="button">Удалить</button></div></div>`).join("");
-  $$('.remove-item').forEach(button => button.addEventListener("click", () => { cart.splice(Number(button.dataset.index), 1); renderCart(); }));
+  $("#cartItems").innerHTML = cart.map((item, index) => `<div class="cart-item"><div><h3>${item.title || item.name}</h3><p>${item.quantity || 1} шт. · ${item.vehicle || item.sku || "совместимость проверим по VIN"}</p></div><div class="cart-item__right"><strong>${money(item.price * (item.quantity || 1))}</strong><button class="remove-item" data-index="${index}" type="button">Удалить</button></div></div>`).join("");
+  $$('.remove-item').forEach(button => button.addEventListener("click", () => { cart.splice(Number(button.dataset.index), 1); localStorage.setItem(CART_KEY, JSON.stringify(cart)); renderCart(); }));
 }
 
 $$('.add-button').forEach(button => button.addEventListener("click", () => {
@@ -256,7 +259,11 @@ $$('.add-button').forEach(button => button.addEventListener("click", () => {
   }
   if (card.dataset.match === "blocked") return;
   const vehicleName = activeMatch?.status === "confirmed" ? `${make.value} ${model.value}, ${year.value}` : "без выбранного автомобиля";
-  cart.push({name: button.dataset.name, price: Number(button.dataset.price), vehicle: vehicleName});
+  const itemId = button.dataset.name.toLowerCase().replace(/[^a-zа-я0-9]+/gi, "-");
+  const existing = cart.find(item => item.id === itemId);
+  if (existing) existing.quantity = (existing.quantity || 1) + 1;
+  else cart.push({id:itemId, title:button.dataset.name, sku:"", price:Number(button.dataset.price), quantity:1, vehicle:vehicleName});
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
   button.classList.add("added");
   button.textContent = "✓";
   setTimeout(() => { button.classList.remove("added"); button.textContent = "+"; }, 900);
@@ -306,6 +313,7 @@ $("#checkoutForm").addEventListener("submit", event => {
   $("#checkoutFormView").classList.add("hidden");
   $("#successView").classList.remove("hidden");
   cart.length = 0;
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
   renderCart();
 });
 
@@ -360,9 +368,13 @@ function registerWebMcp() {
         if (!button) throw new Error("Товар не найден");
         const card = button.closest(".product-card");
         if (!activeMatch || activeMatch.status !== "confirmed" || card.dataset.match !== "verified") throw new Error("Совместимость товара не подтверждена для выбранного автомобиля");
-        cart.push({name:button.dataset.name, price:Number(button.dataset.price), vehicle:`${make.value} ${model.value}, ${year.value}`});
+        const itemId = button.dataset.name.toLowerCase().replace(/[^a-zа-я0-9]+/gi, "-");
+        const existing = cart.find(item => item.id === itemId);
+        if (existing) existing.quantity = (existing.quantity || 1) + 1;
+        else cart.push({id:itemId, title:button.dataset.name, sku:"", price:Number(button.dataset.price), quantity:1, vehicle:`${make.value} ${model.value}, ${year.value}`});
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
         renderCart();
-        return {name:button.dataset.name, vehicle:`${make.value} ${model.value}, ${year.value}`, cartItems:cart.length, total:cart.reduce((sum,item)=>sum+item.price,0)};
+        return {name:button.dataset.name, vehicle:`${make.value} ${model.value}, ${year.value}`, cartItems:cart.reduce((sum,item)=>sum+(item.quantity || 1),0), total:cart.reduce((sum,item)=>sum+item.price*(item.quantity || 1),0)};
       }
     }
   ];
