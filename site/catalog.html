@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Каталог датчиков TPMS — ProДатчики</title>
-  <meta name="description" content="Каталог датчиков давления в шинах: Autel, Launch, Huf, Schrader и оригинальные датчики. Поиск и фильтры по марке автомобиля, частоте и производителю.">
+  <meta name="description" content="Датчики давления шин на 98% марок авто. Каталог Autel, Launch и оригинальных датчиков с поиском по артикулу и фильтрами по марке автомобиля и производителю.">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <meta name="theme-color" content="#111214">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./common.js" defer></script><script src="./catalog-data.js?v=3" defer></script><script src="./catalog.js?v=3" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=5">
+  <script src="./common.js?v=5" defer></script><script src="./catalog-data.js?v=5" defer></script><script src="./catalog.js?v=5" defer></script>
 </head>
 <body class="page-light">
   <site-header active="catalog"></site-header>
   <main>
     <section class="page-hero page-hero--compact">
-      <div class="shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="index.html">Главная</a><span>/</span><span>Каталог</span></nav><p class="eyebrow">КАТАЛОГ TPMS</p><h1>Датчики и комплектующие</h1><p>Ищите по названию или артикулу, отфильтруйте марку автомобиля, частоту и производителя. Для точной совместимости сначала выберите автомобиль или проверьте VIN.</p><a class="inline-cta" href="selection.html">Подобрать по автомобилю или VIN →</a></div>
+      <div class="shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="index.html">Главная</a><span>/</span><span>Каталог</span></nav><p class="eyebrow">КАТАЛОГ TPMS</p><h1>Датчики давления шин на 98% марок авто</h1><p>Ищите по названию или артикулу, выберите марку автомобиля и производителя. Для точной совместимости сначала выберите автомобиль или проверьте VIN.</p><a class="inline-cta" href="selection.html">Подобрать по автомобилю или VIN →</a></div>
     </section>
 
     <section class="catalog-page section">
@@ -33,9 +33,7 @@
             <div class="filter-panel__head"><strong>Фильтры</strong><button id="closeFilters" type="button" aria-label="Закрыть фильтры">×</button></div>
             <fieldset><legend>Марка автомобиля</legend><div class="filter-option-list" id="vehicleMakeFilters"></div><small class="filter-hint">Показываем универсальные и заявленные для марки товары. Точную применимость проверяем по модели и VIN.</small></fieldset>
             <fieldset><legend>Тип товара</legend><label><input type="checkbox" name="type" value="sensor"> Датчики</label><label><input type="checkbox" name="type" value="kit"> Комплекты</label><label><input type="checkbox" name="type" value="oem"> Оригинальные</label><label><input type="checkbox" name="type" value="valve"> Вентили</label><label><input type="checkbox" name="type" value="accessory"> Комплектующие</label></fieldset>
-            <fieldset><legend>Производитель</legend><label><input type="checkbox" name="brand" value="Autel"> Autel</label><label><input type="checkbox" name="brand" value="Launch"> Launch</label><label><input type="checkbox" name="brand" value="Huf"> Huf</label><label><input type="checkbox" name="brand" value="Schrader"> Schrader</label><label><input type="checkbox" name="brand" value="OEM"> OEM</label></fieldset>
-            <fieldset><legend>Частота</legend><label><input type="checkbox" name="frequency" value="433"> 433 МГц</label><label><input type="checkbox" name="frequency" value="315"> 315 МГц</label></fieldset>
-            <fieldset><legend>Наличие</legend><label><input type="checkbox" name="availability" value="stock"> В наличии</label><label><input type="checkbox" name="availability" value="order"> Под заказ</label></fieldset>
+            <fieldset><legend>Производитель</legend><div class="filter-option-list" id="manufacturerFilters"></div></fieldset>
             <button class="reset-filters" id="resetFilters" type="button">Сбросить фильтры</button>
           </aside>
 

@@ -186,6 +186,11 @@ select:disabled { color: #a0a1a2; background: #e9e9e5; }
 .map-pin { position: absolute; left: 52%; top: 44%; display: flex; align-items: center; gap: 10px; background: #111214; padding: 9px 13px 9px 8px; border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,.35); transform: translate(-50%,-50%); }
 .map-pin span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: var(--yellow); color: #111; font-weight: 900; }
 .map-pin b { font-size: .78rem; }
+.contacts-location { display: grid; align-items: center; padding: 42px; }
+.contacts-location__content { position: relative; z-index: 1; }
+.contacts-location__content h3 { max-width: 400px; margin: 0 0 14px; font-size: clamp(1.4rem, 3vw, 2.2rem); line-height: 1.25; }
+.contacts-location__content > p:not(.eyebrow) { color: #adb0b4; font-size: .8rem; }
+.contacts-location__content .secondary-button { display: inline-flex; margin-top: 18px; }
 .contacts__card { padding: 50px; background: #1b1d20; }
 .contacts__card h2 { margin-bottom: 32px; }
 .contact-row { display: grid; grid-template-columns: 125px 1fr; gap: 20px; padding: 16px 0; border-top: 1px solid var(--line); }

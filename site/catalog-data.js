@@ -21,7 +21,7 @@ window.TPMS_PRODUCTS = [
   {id:"service-kit-rubber", sku:"KIT-VLV-R", brand:"ProДатчики", title:"Сервисный комплект резинового вентиля", type:"accessory", frequency:[], valve:"rubber", price:290, image:"./assets/launch-ltr.jpg", stock:55, description:"Комплект расходных элементов для резинового вентиля TPMS."}
 ];
 
-window.TPMS_CAR_MAKES = ["Toyota","Lexus","BMW","MINI","Mercedes-Benz","Volkswagen","Audi","Skoda","Porsche","Kia","Hyundai","Honda","Haval","Geely"];
+const programmableMakes = ["Toyota","Lexus","BMW","MINI","Mercedes-Benz","Volkswagen","Audi","Skoda","Porsche","Kia","Hyundai","Honda","Haval","Geely"];
 
 const productCoverage = {
   "autel-mx-metal":["*"], "autel-mx-rubber":["*"], "autel-mx-4pack-metal":["*"], "autel-mx-4pack-rubber":["*"],
@@ -31,4 +31,12 @@ const productCoverage = {
   "oem-toyota-42607":["Toyota","Lexus"], "oem-bmw-361068":["BMW","MINI"], "oem-vag-5q0907":["Volkswagen","Audi","Skoda","Porsche"]
 };
 
-window.TPMS_PRODUCTS.forEach(product => { product.coverage = productCoverage[product.id] || []; });
+window.TPMS_PRODUCTS.forEach(product => {
+  const coverage = productCoverage[product.id] || [];
+  product.coverage = coverage.includes("*") ? [...programmableMakes] : coverage;
+});
+
+window.CatalogInventory = {
+  isAvailable: product => Number(product.stock) > 0 && product.active !== false,
+  carMakes: products => [...new Set(products.flatMap(product => product.coverage || []).filter(make => make !== "*"))].sort((a, b) => a.localeCompare(b, "ru"))
+};
