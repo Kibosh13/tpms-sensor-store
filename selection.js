@@ -56,11 +56,16 @@
   }
 
   function modelYearFromVin(vin) {
+    // This year encoding is not universal. European manufacturer formats must
+    // not inherit US model-year assumptions (e.g. WDB2100261B359440).
+    if (!['1HG','2HG','4T1','5TD'].includes(vin.slice(0,3)) || !hasValidChecksum(vin)) return null;
     const codes = "ABCDEFGHJKLMNPRSTVWXY123456789";
     const index = codes.indexOf(vin[9]);
     if (index < 0) return null;
     const candidates = [1980 + index, 2010 + index, 2040 + index].filter(value => value <= currentYear + 1);
-    return Math.max(...candidates);
+    // On North American passenger VINs position 7 disambiguates the 30-year cycle.
+    const cycle = /[0-9]/.test(vin[6]) ? candidates.filter(value => value < 2010) : candidates.filter(value => value >= 2010);
+    return cycle.length === 1 ? cycle[0] : null;
   }
 
   const makeAliases = {TOYOTA:"Toyota",BMW:"BMW","MERCEDES-BENZ":"Mercedes-Benz",MERCEDES:"Mercedes-Benz",VOLKSWAGEN:"Volkswagen",KIA:"Kia",HYUNDAI:"Hyundai",HONDA:"Honda",HAVAL:"Haval",GEELY:"Geely"};
@@ -68,7 +73,7 @@
     const localMake = makeAliases[String(decoded.Make || "").toUpperCase()] || decoded.Make;
     const models = Object.keys(window.VehicleData.catalog[localMake] || {});
     const decodedModel = String(decoded.Model || "").toLowerCase();
-    const localModel = models.find(item => item.toLowerCase() === decodedModel || decodedModel.includes(item.toLowerCase()) || item.toLowerCase().includes(decodedModel));
+    const localModel = decodedModel && models.find(item => item.toLowerCase() === decodedModel);
     return {make:localMake, model:localModel || decoded.LocalVehicle?.model, year:Number(decoded.ModelYear) || null};
   }
 
@@ -79,13 +84,13 @@
     if (errorCodes.length && !localExact) return {status:"manual",reason:"Декодер вернул неполные или противоречивые данные. Для этого VIN требуется ручная сверка по каталогу применяемости.",vehicleData:vehicle,evidence:"vin-warning"};
     const tpms = String(decoded.TPMS || "").toLowerCase();
     if (tpms.includes("indirect")) return {status:"indirect",system:"indirect",frequency:null,relearn:"калибровка через меню автомобиля",oem:"ABS",vehicleData:vehicle,evidence:"vpic"};
+    if (localExact && !tpms) {
+      const identified = `${decoded.Make} ${decoded.LocalVehicle.modification} (${decoded.LocalVehicle.series})`;
+      return {status:"manual",identified:true,reason:`Автомобиль определён как ${identified}. Точный год, наличие прямой TPMS и OE-номер в этом формате VIN не подтверждены. Нужна сверка комплектации; период выпуска модели не является годом конкретного автомобиля.`,vehicleData:vehicle,evidence:"manufacturer-code"};
+    }
     if (!vehicle.make || !vehicle.model || !vehicle.year) {
       const knownType = tpms.includes("direct") ? "Декодер подтверждает прямую систему TPMS, но " : "";
       return {status:"manual",reason:`${knownType}модели нет во внутренней матрице. Нужна сверка протокола и OE-номера по профессиональному каталогу.`,vehicleData:vehicle,evidence:tpms ? "vpic" : "partial"};
-    }
-    if (localExact && !tpms) {
-      const identified = `${decoded.Make} ${decoded.LocalVehicle.modification} (${decoded.LocalVehicle.series}), ${decoded.ModelYear}`;
-      return {status:"manual",identified:true,reason:`Автомобиль определён как ${identified}. Для этой комплектации наличие прямой TPMS и OE-номер датчика не подтверждены, поэтому товар автоматически не предлагаем.`,vehicleData:vehicle,evidence:"manufacturer-code"};
     }
     if (market === "unknown") return {status:"manual",reason:"Тип системы определён, но без рынка поставки нельзя надёжно выбрать частоту и протокол датчика.",vehicleData:vehicle,evidence:"vpic"};
     const matrixMatch = window.VehicleData.lookup(vehicle.make, vehicle.model, vehicle.year, market);
@@ -126,6 +131,8 @@
   }
 
   async function decodeVin(vin) {
+    const local = localDecode(vin);
+    if (local.LocalVehicle?.confidence === "exact-type") return {...local,ErrorCode:"0"};
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 12000);
     try {
@@ -141,10 +148,10 @@
   function enrichDecoded(decoded, vin) {
     const fallbackMake = wmiMakes[vin.slice(0,3)] || "";
     const local = window.ManufacturerVinData?.decode(vin);
-    const year = Number(decoded.ModelYear) || modelYearFromVin(vin) || null;
-    const localInRange = local?.confidence === "exact-type" && year >= local.from && year <= local.to;
-    const trustedLocal = localInRange ? local : local?.confidence === "manufacturer-format" ? local : null;
-    return {...decoded,Make:trustedLocal?.make || decoded.Make || fallbackMake,Model:trustedLocal?.model || decoded.Model,ModelYear:String(year || ""),Series:trustedLocal?.series || decoded.Series,BodyClass:trustedLocal?.body || decoded.BodyClass,FuelTypePrimary:trustedLocal?.fuel || decoded.FuelTypePrimary,LocalVehicle:trustedLocal,DecodeSource:localInRange ? "manufacturer-code" : decoded.Make ? "vpic" : fallbackMake ? "wmi" : "partial"};
+    const manufacturerFormat = local?.confidence === "exact-type" || local?.confidence === "manufacturer-format";
+    const year = manufacturerFormat ? null : Number(decoded.ModelYear) || modelYearFromVin(vin) || null;
+    const trustedLocal = manufacturerFormat ? local : null;
+    return {...decoded,Make:trustedLocal?.make || decoded.Make || fallbackMake,Model:trustedLocal?.model || decoded.Model,ModelYear:String(year || ""),Series:trustedLocal?.series || decoded.Series,BodyClass:trustedLocal?.body || decoded.BodyClass,FuelTypePrimary:trustedLocal?.fuel || decoded.FuelTypePrimary,LocalVehicle:trustedLocal,DecodeSource:local?.confidence === "exact-type" ? "manufacturer-code" : decoded.Make ? "vpic" : fallbackMake ? "wmi" : "partial"};
   }
 
   function localDecode(vin) {

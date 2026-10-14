@@ -37,7 +37,7 @@
             <label class="vin-region"><span>Рынок автомобиля</span><select id="vinRegion" name="vinRegion" required><option value="eu">Россия / Европа</option><option value="us">США / Канада</option><option value="unknown">Не знаю — нужна ручная сверка</option></select><small>Именно рынок поставки, а не страна сборки.</small></label>
             <button class="primary-button" id="vinSubmit" disabled type="submit">Расшифровать VIN</button>
           </form>
-          <div class="vin-privacy" id="vinHelp"><span>⌁</span><p><strong>Как это работает</strong> VIN отправляется по HTTPS в декодер vPIC NHTSA; доступные локальные коды производителя дополняют результат. Модуль не сохраняет VIN. Рынок поставки проверяется отдельно: страна сборки его не заменяет.</p></div>
+          <div class="vin-privacy" id="vinHelp"><span>⌁</span><p><strong>Как это работает</strong> VIN сначала проверяется в собственной базе кодов производителя. Если точной записи нет, используется vPIC NHTSA по HTTPS. Модуль не сохраняет VIN. Год и комплектация, не закодированные в VIN, требуют уточнения. Рынок поставки проверяется отдельно: страна сборки его не заменяет.</p></div>
         </section>
 
         <section class="selection-result hidden" id="selectionResult" aria-live="polite"></section>
