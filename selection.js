@@ -57,7 +57,7 @@
 
   function modelYearFromVin(vin) {
     // This year encoding is not universal. European manufacturer formats must
-    // not inherit US model-year assumptions (e.g. WDB2100261B359440).
+    // not inherit US model-year assumptions (e.g. European WDB type codes).
     if (!['1HG','2HG','4T1','5TD'].includes(vin.slice(0,3)) || !hasValidChecksum(vin)) return null;
     const codes = "ABCDEFGHJKLMNPRSTVWXY123456789";
     const index = codes.indexOf(vin[9]);

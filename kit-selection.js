@@ -59,9 +59,13 @@
     const yearValue=Number(decoded.ModelYear);
     const candidates=[...(models.get(makeValue)||new Map()).entries()].filter(([,years])=>!yearValue||years.has(yearValue));
     const exact=candidates.filter(([name])=>normalize(name)===normalize(decoded.Model));
+    // vPIC often returns the family (Camry), while the own catalog records a
+    // generation (Camry VIII / XV70). Resolve only one year-matched generation.
+    const family=normalize(decoded.Model);
+    const byFamily=family?candidates.filter(([name])=>normalize(name).startsWith(family+' ')):[];
     const series=decoded.LocalVehicle?.series;
     const bySeries=series?candidates.filter(([name])=>normalize(name).split(' ').includes(normalize(series))):[];
-    const matching=exact.length===1?exact:bySeries;
+    const matching=exact.length===1?exact:bySeries.length?bySeries:byFamily;
     if(matching.length!==1)return {make:makeValue,year:yearValue,needsModel:true,needsYear:!yearValue};
     return {make:makeValue,model:matching[0][0],year:yearValue,needsYear:!yearValue};
   }
