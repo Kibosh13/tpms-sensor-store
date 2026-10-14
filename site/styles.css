@@ -371,6 +371,10 @@ site-header, site-footer { display: block; }
 .result-specs { grid-template-columns: repeat(3,1fr); }
 .result-reason { margin: 22px 0 0; color: #5f6265; font-size: .82rem; }
 .result-source { margin: 14px 0 0; color: #777a7d; font-size: .66rem; font-weight: 700; }
+.result-source a { color: #5e5900; text-decoration: underline; text-underline-offset: 2px; }
+.result-market-warning { margin-top: 22px; border: 1px solid rgba(150,95,0,.2); border-radius: 11px; background: rgba(255,215,128,.42); padding: 13px 15px; }
+.result-market-warning strong { display: block; margin-bottom: 3px; font-size: .76rem; }
+.result-market-warning p { margin: 0; color: #6b5c3f; font-size: .7rem; line-height: 1.5; }
 .selection-result__actions { display: flex; align-items: center; gap: 15px; margin-top: 24px; }
 .selection-result__actions .primary-button { width: auto; }
 .selection-result__actions > span { color: #73767a; font-size: .66rem; }
