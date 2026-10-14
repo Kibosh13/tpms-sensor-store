@@ -1,0 +1,14 @@
+{
+  "title": "Датчики давления шин",
+  "slug": "tpms",
+  "status": "ACTIVE",
+  "description": "Датчики давления шин из существующего каталога ProДатчики. Подбор по автомобилю и сверка OE-номера перед покупкой.",
+  "seo_title": "Датчики давления шин · ProДатчики",
+  "seo_description": "Датчики давления шин Autel и других производителей. Подбор по марке, модели и году автомобиля, программирование и самовывоз в Москве.",
+  "is_available_in_ad_feed": false,
+  "collection_type": "DYNAMIC",
+  "collection_sort": "SORT_WEIGHT",
+  "dynamic_filter": {
+    "category_slugs": ["datchik-davleniya-shin", "datchik-dlya-avtomobilya"]
+  }
+}

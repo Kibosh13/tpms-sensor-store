@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {parseFitments,buildIndex,isSensor,normalize} from './fitment-parser.mjs';
+assert.deepEqual(parseFitments('Toyota Camry XV50 2011, 2012, 2013')[0].years,[2011,2012,2013]);
+assert.deepEqual(parseFitments('Kia Sportage III 2010–2013')[0].years,[2010,2011,2012,2013]);
+assert.equal(parseFitments('Toyota Camry XV50 2011 OEM 4260733011').length,0);
+assert.equal(parseFitments('Подходит на все автомобили с 2010 года').length,0);
+assert.equal(parseFitments('Volvo S60 (с VIN 150000) 2014, 2015')[0].condition,'S60 (с VIN 150000)');
+assert.equal(parseFitments('Mercedes Benz E-Class W210 1999, 2000')[0].make,'Mercedes-Benz');
+assert.equal(isSensor({name:'Вентиль для датчика TPMS'}),false);
+assert.equal(isSensor({name:'AUTEL MX-sensor 1шт'}),true);
+assert.equal(normalize('Mazda CX-5'),'MAZDA CX 5');
+assert.throws(()=>buildIndex({coverage:'partial',items:[]}),/partial/);
+const v={id:'1',status:'PUBLISHED',name:'Датчик давления шин',description:'Toyota Camry 2011, 2012\nЧастота 433 МГц',relative_link_url:'/products/tpms',stocks:[{quantity:2,reserved:2}]};
+assert.equal(buildIndex({coverage:'complete',received:1,items:[v]}).products[0].availableAtExport,false);
+assert.equal(buildIndex({coverage:'complete',received:1,items:[{...v,status:'HIDDEN'}]}).products.length,0);
+assert.equal(buildIndex({coverage:'complete',received:1,items:[{...v,relative_link_url:'https://other.invalid/'}]}).products.length,0);
+console.log('Fitment parser: 13 checks passed.');

@@ -1,0 +1,8 @@
+{
+  "titleText": "Популярные датчики",
+  "titleAlign": "left",
+  "count": 4,
+  "columns": 4,
+  "verticalRhythm": "600",
+  "verticalRhythmTouch": "400"
+}

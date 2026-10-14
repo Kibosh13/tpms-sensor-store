@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Подбор датчиков по автомобилю и VIN — ProДатчики</title>
+  <meta name="description" content="Подбор датчиков TPMS по марке, модели, году и VIN. Проверка формата VIN, декодирование автомобиля и точная сверка совместимости.">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet"><meta name="theme-color" content="#111214">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="./styles.css?v=5"><link rel="stylesheet" href="./kit-picker.css?v=1">
+  <script src="./vehicle-data.js?v=4" defer></script><script src="./vin-data.js?v=4" defer></script><script src="./selection.js?v=6" defer></script><script src="./kit-selection.js?v=1" defer></script>
+</head>
+<body data-kit-picker="true">
+  <header class="header kit-header"><div class="shell header__inner"><a class="brand" href="https://prodat4iki.ru/"><img src="./assets/logo-clean.png" alt="ProДатчики"></a><nav class="nav" aria-label="Главное меню"><a href="https://prodat4iki.ru/collections/tpms">Каталог</a><a href="https://prodat4iki.ru/services">Услуги</a><a href="https://prodat4iki.ru/contacts">Контакты</a></nav><a class="kit-cart-link" href="https://prodat4iki.ru/cart">Корзина KIT →</a></div></header>
+  <main>
+    <section class="page-hero selection-hero"><div class="shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="https://prodat4iki.ru/">Главная</a><span>/</span><span>Подбор датчиков</span></nav><p class="eyebrow">ТОЧНЫЙ ПОДБОР TPMS</p><h1>Подберём без догадок</h1><p>Выбираем реальные товары KIT по применяемости, указанной продавцом. VIN помогает определить автомобиль; комплектацию и OE-номер проверяем перед покупкой.</p></div></section>
+
+    <section class="selection-page section"><div class="shell selection-layout">
+      <div class="selection-workspace">
+        <div class="selection-tabs" role="tablist" aria-label="Способ подбора"><button class="active" type="button" role="tab" aria-selected="true" data-selection-tab="car">По автомобилю</button><button type="button" role="tab" aria-selected="false" data-selection-tab="vin">По VIN</button></div>
+
+        <section class="selection-panel" id="carPanel" role="tabpanel">
+          <div class="selection-panel__head"><span>01</span><div><h2>Марка, модель и год</h2><p>Подходит, если вы точно знаете рынок поставки автомобиля.</p></div></div>
+          <form class="full-selector" id="vehicleForm">
+            <label><span>Марка</span><select id="vehicleMake" required><option value="">Выберите марку</option></select></label>
+            <label><span>Модель</span><select id="vehicleModel" required disabled><option value="">Сначала выберите марку</option></select></label>
+            <label><span>Год выпуска</span><select id="vehicleYear" required disabled><option value="">Выберите год</option></select></label>
+            <label><span>Рынок поставки</span><select id="vehicleRegion" required disabled><option value="">Выберите рынок</option><option value="eu">Россия / Европа</option><option value="us">США / Канада</option><option value="unknown">Не знаю</option></select></label>
+            <button class="primary-button" type="submit">Найти по применяемости</button>
+          </form>
+        </section>
+
+        <section class="selection-panel hidden" id="vinPanel" role="tabpanel">
+          <div class="selection-panel__head"><span>VIN</span><div><h2>Проверка по VIN</h2><p>Введите 17 символов с кузова или из СТС. Буквы I, O и Q в VIN не используются.</p></div></div>
+          <form class="vin-form" id="vinForm" novalidate>
+            <label for="vinInput">VIN автомобиля</label>
+            <div class="vin-input-wrap"><input id="vinInput" disabled name="vin" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="17" placeholder="Например, WBA…" aria-describedby="vinHelp vinError"><span id="vinCounter">0 / 17</span></div>
+            <p class="field-error hidden" id="vinError" role="alert"></p>
+            <label class="vin-region"><span>Рынок автомобиля</span><select id="vinRegion" name="vinRegion" required><option value="eu">Россия / Европа</option><option value="us">США / Канада</option><option value="unknown">Не знаю — нужна ручная сверка</option></select><small>Именно рынок поставки, а не страна сборки.</small></label>
+            <button class="primary-button" id="vinSubmit" disabled type="submit">Расшифровать VIN</button>
+          </form>
+          <div class="vin-privacy" id="vinHelp"><span>⌁</span><p><strong>Как это работает</strong> VIN отправляется по HTTPS в декодер vPIC NHTSA; доступные локальные коды производителя дополняют результат. Модуль не сохраняет VIN. Рынок поставки проверяется отдельно: страна сборки его не заменяет.</p></div>
+        </section>
+
+        <section class="selection-result hidden" id="selectionResult" aria-live="polite"></section>
+      </div>
+
+      <aside class="selection-aside">
+        <p class="eyebrow">ПОЧЕМУ ДВА ЭТАПА</p><h2>VIN определяет автомобиль, но не всегда датчик</h2><ol><li><span>1</span><div><strong>Проверяем сам VIN</strong><p>Формат, допустимые символы и контрольную сумму для рынков, где она обязательна.</p></div></li><li><span>2</span><div><strong>Декодируем автомобиль</strong><p>Производитель, модель, год и рынок поставки.</p></div></li><li><span>3</span><div><strong>Сверяем применяемость</strong><p>Марку, модель, год и ограничения из описания конкретного товара. Неизвестные данные не подменяем догадками.</p></div></li></ol><div class="selection-warning"><strong>Важно</strong><p>Нельзя корректно подобрать датчик только по первым трём символам VIN или одной частоте. Если в справочнике нет точного совпадения, сайт не будет показывать случайный товар.</p></div></aside>
+    </div></section>
+  </main>
+  <footer class="footer"><div class="shell footer__inner"><p>ProДатчики · +7 (977) 396-17-19 · ежедневно, 11:00–18:00</p><p><a href="https://prodat4iki.ru/collections/tpms">Вернуться в магазин</a></p></div></footer>
+</body>
+</html>

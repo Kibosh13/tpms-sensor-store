@@ -191,6 +191,9 @@
     });
   }
 
+  window.TpmsVinDecoder = Object.freeze({normalizeVin, validateVin, decodeVin, localDecode});
+  // KIT's external picker reuses the decoder, not this demo catalog's handlers.
+  if (document.body.dataset.kitPicker === "true") return;
   document.addEventListener("DOMContentLoaded", () => {
     setupVehicleForm(); setupVinForm();
     document.querySelectorAll("[data-selection-tab]").forEach(button => button.addEventListener("click", () => switchTab(button.dataset.selectionTab)));

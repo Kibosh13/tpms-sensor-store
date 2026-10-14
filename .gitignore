@@ -44,3 +44,8 @@ Thumbs.db
 # Service-specific local metadata
 .openai/
 
+# KIT local build artifacts and credentials (backups stay outside this repo)
+kit/generated/
+*.token
+site/kit-fitment.json
+
