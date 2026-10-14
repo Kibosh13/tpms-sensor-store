@@ -1,9 +1,14 @@
 (function () {
   const PAGE_SIZE = 9;
   const products = window.TPMS_PRODUCTS || [];
-  const state = {search:"", sort:"popular", page:1, vehicle:"", make:"", model:"", year:"", verified:false, type:new Set(), brand:new Set(), frequency:new Set(), availability:new Set()};
+  const state = {search:"", sort:"popular", page:1, vehicle:"", make:"", model:"", year:"", verified:false, vehicleMake:new Set(), type:new Set(), brand:new Set(), frequency:new Set(), availability:new Set()};
   const money = value => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
   const plural = count => count % 10 === 1 && count % 100 !== 11 ? "товар" : [2,3,4].includes(count % 10) && ![12,13,14].includes(count % 100) ? "товара" : "товаров";
+
+  function renderVehicleMakeFilters() {
+    const makes = window.TPMS_CAR_MAKES || [];
+    document.querySelector("#vehicleMakeFilters").innerHTML = makes.map(value => `<label><input type="checkbox" name="vehicleMake" value="${value}"> ${value}</label>`).join("");
+  }
 
   function initFromQuery() {
     const params = new URLSearchParams(location.search);
@@ -21,16 +26,21 @@
     state.model = params.get("model") || "";
     state.year = params.get("year") || "";
     state.verified = params.get("verified") === "1";
+    if (state.make) {
+      state.vehicleMake.add(state.make);
+      const input = document.querySelector(`input[name="vehicleMake"][value="${state.make}"]`);
+      if (input) input.checked = true;
+    }
     if (vehicle) document.querySelector("#catalogSelectionNote").textContent = `${state.verified ? "Совместимые варианты" : "Подбор"} для: ${vehicle}`;
   }
 
   function matches(product) {
-    const haystack = `${product.title} ${product.brand} ${product.sku} ${product.description}`.toLowerCase();
+    const haystack = `${product.title} ${product.brand} ${product.sku} ${product.description} ${(product.coverage || []).join(" ")}`.toLowerCase();
     if (state.search && !haystack.includes(state.search.toLowerCase())) return false;
     if (state.type.size && !state.type.has(product.type)) return false;
     if (state.brand.size && !state.brand.has(product.brand)) return false;
     if (state.frequency.size && ![...state.frequency].some(value => product.frequency.includes(Number(value)))) return false;
-    if (state.make && ["sensor","kit","oem"].includes(product.type) && !product.coverage.includes("*") && !product.coverage.includes(state.make)) return false;
+    if (state.vehicleMake.size && !product.coverage.includes("*") && ![...state.vehicleMake].some(value => product.coverage.includes(value))) return false;
     if (state.availability.has("stock") && !state.availability.has("order") && product.stock < 1) return false;
     if (state.availability.has("order") && !state.availability.has("stock") && product.stock > 0) return false;
     return true;
@@ -59,7 +69,7 @@
     const node = document.querySelector("#activeChips");
     const chips = [];
     if (state.search) chips.push({group:"search", value:"", label:`«${state.search}»`});
-    ["type","brand","frequency","availability"].forEach(group => state[group].forEach(value => chips.push({group,value,label: value === "stock" ? "В наличии" : value === "order" ? "Под заказ" : value === "sensor" ? "Датчики" : value === "kit" ? "Комплекты" : value === "oem" ? "Оригинальные" : value === "valve" ? "Вентили" : value === "accessory" ? "Комплектующие" : value === "433" || value === "315" ? `${value} МГц` : value})));
+    ["vehicleMake","type","brand","frequency","availability"].forEach(group => state[group].forEach(value => chips.push({group,value,label: value === "stock" ? "В наличии" : value === "order" ? "Под заказ" : value === "sensor" ? "Датчики" : value === "kit" ? "Комплекты" : value === "oem" ? "Оригинальные" : value === "valve" ? "Вентили" : value === "accessory" ? "Комплектующие" : value === "433" || value === "315" ? `${value} МГц` : value})));
     node.innerHTML = chips.map(chip => `<button type="button" data-chip-group="${chip.group}" data-chip-value="${chip.value}">${chip.label}<span>×</span></button>`).join("");
   }
 
@@ -88,14 +98,17 @@
 
   function reset() {
     state.search = ""; state.sort = "popular"; state.page = 1;
-    ["type","brand","frequency","availability"].forEach(group => state[group].clear());
+    state.vehicle = ""; state.make = ""; state.model = ""; state.year = ""; state.verified = false;
+    ["vehicleMake","type","brand","frequency","availability"].forEach(group => state[group].clear());
     document.querySelector("#catalogSearch").value = "";
     document.querySelector("#catalogSort").value = "popular";
     document.querySelectorAll(".catalog-sidebar input").forEach(input => { input.checked = false; });
+    document.querySelector("#catalogSelectionNote").textContent = "Показан весь каталог";
     render();
   }
 
   document.addEventListener("DOMContentLoaded", () => {
+    renderVehicleMakeFilters();
     initFromQuery();
     render();
     let searchTimer;
@@ -114,7 +127,7 @@
       if (product) window.StoreCart.add(product);
     });
     document.querySelector("#catalogPagination").addEventListener("click", event => { const button = event.target.closest("[data-page]"); if (!button || button.disabled) return; state.page = Number(button.dataset.page); render(); document.querySelector(".catalog-results").scrollIntoView({behavior:"smooth"}); });
-    document.querySelector("#activeChips").addEventListener("click", event => { const button = event.target.closest("[data-chip-group]"); if (!button) return; if (button.dataset.chipGroup === "search") { state.search = ""; document.querySelector("#catalogSearch").value = ""; } else { state[button.dataset.chipGroup].delete(button.dataset.chipValue); const input = document.querySelector(`input[name="${button.dataset.chipGroup}"][value="${button.dataset.chipValue}"]`); if (input) input.checked = false; } state.page = 1; render(); });
+    document.querySelector("#activeChips").addEventListener("click", event => { const button = event.target.closest("[data-chip-group]"); if (!button) return; if (button.dataset.chipGroup === "search") { state.search = ""; document.querySelector("#catalogSearch").value = ""; } else { state[button.dataset.chipGroup].delete(button.dataset.chipValue); const input = document.querySelector(`input[name="${button.dataset.chipGroup}"][value="${button.dataset.chipValue}"]`); if (input) input.checked = false; if (button.dataset.chipGroup === "vehicleMake" && button.dataset.chipValue === state.make) { state.vehicle = ""; state.make = ""; state.model = ""; state.year = ""; state.verified = false; document.querySelector("#catalogSelectionNote").textContent = "Показан весь каталог"; } } state.page = 1; render(); });
     document.querySelector("#resetFilters").addEventListener("click", reset);
     document.querySelector("#emptyReset").addEventListener("click", reset);
     document.querySelector("#filterDrawerButton").addEventListener("click", () => document.querySelector("#catalogSidebar").classList.add("open"));
