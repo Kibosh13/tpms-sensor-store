@@ -38,6 +38,6 @@ html=html.replace('<body>','<body data-kit-picker="true">')
   .replace('Тип системы, частоту, протокол и способ прописки по каталогу применяемости.','Марку, модель, год и ограничения из описания конкретного товара. Неизвестные данные не подменяем догадками.')
   .replace('Россия / Европа — 433 МГц','Россия / Европа')
   .replace('США / Канада — 315 МГц','США / Канада')
-  .replace('VIN сначала сверяется с локальными кодами производителя, затем отправляется по HTTPS в официальный декодер vPIC NHTSA. На сайте номер не сохраняется.','VIN отправляется по HTTPS в декодер vPIC NHTSA; доступные локальные коды производителя дополняют результат. Модуль не сохраняет VIN.');
+  .replace('VIN сначала сверяется с локальными кодами производителя, затем отправляется по HTTPS в официальный декодер vPIC NHTSA. На сайте номер не сохраняется.','VIN сначала проверяется в собственной базе кодов производителя. Если точной записи нет, используется vPIC NHTSA по HTTPS. Модуль не сохраняет VIN. Год и комплектация, не закодированные в VIN, требуют уточнения.');
 await fs.writeFile(path.join(repo,'site/kit-selection.html'),html);
 console.log(JSON.stringify({publishedRead:index.publishedVariantsRead,productsWithParsedFitment:index.products.length,fitmentRows:index.products.reduce((s,p)=>s+p.fitments.length,0),available:index.products.filter(p=>p.availableAtExport).length,generated:['site/kit-fitment-index.json','site/kit-fitment/','site/kit-selection.html']},null,2));

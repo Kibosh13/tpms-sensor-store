@@ -1,0 +1,12 @@
+{
+  "menuId": "01a13b87-5c03-72b7-94dc-54f72fbbb7e7",
+  "title": "ProДатчики · навигация",
+  "links": [
+    {"title": "Каталог", "url": "https://prodat4iki.ru/collections/tpms"},
+    {"title": "Подбор датчиков", "url": "https://kibosh13.github.io/tpms-sensor-store/kit-selection.html"},
+    {"title": "Услуги", "url": "https://prodat4iki.ru/services"},
+    {"title": "Доставка", "url": "https://prodat4iki.ru/delivery"},
+    {"title": "Оплата", "url": "https://prodat4iki.ru/payment"},
+    {"title": "Контакты", "url": "https://prodat4iki.ru/contacts"}
+  ]
+}

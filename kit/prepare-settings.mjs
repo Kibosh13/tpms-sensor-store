@@ -42,17 +42,28 @@ const main = base.pages.find(p => p.alias === 'main');
 const header = structuredClone(main.layout.find(s => s.widget === 'YandexKit.Header').settings);
 header.palette = 'pd-dark';
 header.enableBorder = false;
-header.modules.additional.enableCustomerLocation = false;
-header.modules.main.logo = 'sm';
+const navigation = JSON.parse(await fs.readFile(new URL('./navigation.json',import.meta.url),'utf8'));
+header.modules.additional = {menu:'',contactsPrimary:'phone',contactsSecondary:'workingHours',enableCustomerLocation:false};
+header.modules.main = {
+  menu:{menu:navigation.menuId,menuVariant:'sitelinks',menuDisplayType:'drawer'},
+  logo:{logo:'sm',logoPosition:'left'},
+  additional:{searchVariant:'icon',enableActionTitle:false}
+};
 await save('header',header);
 const footer = structuredClone(main.layout.find(s => s.widget === 'YandexKit.Footer').settings);
 footer.palette = 'pd-dark';
 footer.about.description = 'Датчики давления шин. Подбор, диагностика, программирование и клонирование без шиномонтажа. Работаем с 2019 года.';
 footer.legalInfo.copyrightText = '© ProДатчики';
 await save('footer',footer);
+const cart = structuredClone(base.pages.find(p=>p.alias==='cart').layout.find(s=>s.widget==='YandexKit.ShoppingCart').settings);
+cart.modules.advantages.enableAdvantages = false;
+cart.features.enableYandexSplit = 'disabled';
+cart.features.enableYandexDiscount = 'disabled';
+cart.snippet.enableDiscount ||= 'default';
+await save('cart',cart);
 await save('shelf',{
   titleText:'Популярные датчики',titleAlign:'left',palette:'pd-paper',
   count:4,columns:4,verticalRhythm:'600',verticalRhythmTouch:'400',
   dataSource:{id:'01a13ad8-7b20-79c4-84a1-7ebf1fb8b95e',slug:'tpms',type:'collection'}
 });
-console.log('Prepared theme, header, footer and real sensor shelf settings.');
+console.log('Prepared theme, header, footer, cart and real sensor shelf settings.');

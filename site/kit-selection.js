@@ -57,13 +57,26 @@
     const makeValue=[...models.keys()].find(v=>normalize(v)===normalize(decoded.Make));
     if(!makeValue)return null;
     const yearValue=Number(decoded.ModelYear);
-    const candidates=[...(models.get(makeValue)||new Map()).entries()].filter(([,years])=>years.has(yearValue));
+    const candidates=[...(models.get(makeValue)||new Map()).entries()].filter(([,years])=>!yearValue||years.has(yearValue));
     const exact=candidates.filter(([name])=>normalize(name)===normalize(decoded.Model));
+    // vPIC often returns the family (Camry), while the own catalog records a
+    // generation (Camry VIII / XV70). Resolve only one year-matched generation.
+    const family=normalize(decoded.Model);
+    const byFamily=family?candidates.filter(([name])=>normalize(name).startsWith(family+' ')):[];
     const series=decoded.LocalVehicle?.series;
     const bySeries=series?candidates.filter(([name])=>normalize(name).split(' ').includes(normalize(series))):[];
-    const matching=exact.length===1?exact:bySeries;
-    if(matching.length!==1)return {make:makeValue,year:yearValue,needsModel:true};
-    return {make:makeValue,model:matching[0][0],year:yearValue};
+    const matching=exact.length===1?exact:bySeries.length?bySeries:byFamily;
+    if(matching.length!==1)return {make:makeValue,year:yearValue,needsModel:true,needsYear:!yearValue};
+    return {make:makeValue,model:matching[0][0],year:yearValue,needsYear:!yearValue};
+  }
+  function clarifyVehicle(vehicle,market) {
+    switchTab('car');
+    if(!vehicle)return;
+    make.value=vehicle.make;setupModels();
+    if(vehicle.model){model.value=vehicle.model;setupYears();}
+    if(vehicle.year&&vehicle.model){year.value=String(vehicle.year);region.disabled=false;}
+    region.value=market;
+    (vehicle.model?year:model).focus();
   }
   async function initialize() {
     make.disabled=true;$('#vehicleForm button').disabled=true;
@@ -85,23 +98,21 @@
       event.preventDefault();const vin=window.TpmsVinDecoder.normalizeVin(input.value);const invalid=window.TpmsVinDecoder.validateVin(vin);
       if(invalid){error.textContent=invalid;error.classList.remove('hidden');input.setAttribute('aria-invalid','true');input.focus();return;}
       input.removeAttribute('aria-invalid');button.disabled=true;button.textContent='Проверяем VIN…';
-      let decoded,online=true;
-      try{decoded=await window.TpmsVinDecoder.decodeVin(vin);}catch{decoded=window.TpmsVinDecoder.localDecode(vin);online=false;}
+      let decoded;
+      try{decoded=await window.TpmsVinDecoder.decodeVin(vin);}catch{decoded=window.TpmsVinDecoder.localDecode(vin);}
       try {
         const identity=[decoded.Make,decoded.LocalVehicle?.modification||decoded.Model,decoded.ModelYear].filter(Boolean).join(' ');
-        const prefix=`<small>АВТОМОБИЛЬ ПО VIN</small><h2>${esc(identity||'Не удалось определить автомобиль')}</h2><p>${online?'Данные декодера vPIC и доступных кодов производителя.':'Онлайн-декодер недоступен; использованы только доступные локальные коды.'}</p>`;
+        const local=decoded.LocalVehicle;
+        const source=decoded.DecodeSource==='manufacturer-code'?'Собственная база кодов производителя. VIN не отправлялся во внешний декодер.':decoded.DecodeSource==='vpic'?'Данные vPIC дополнены локальными правилами.':'Доступны только локальные данные производителя; полного распознавания нет.';
+        const prefix=`<small>АВТОМОБИЛЬ ПО VIN</small><h2>${esc(identity||'Не удалось определить автомобиль')}</h2><p>${esc(source)}</p>${local?.series?`<p>Кузов: ${esc(local.series)} · код типа: ${esc(local.typeCode)}. ${local.from?`Период выпуска модели: ${local.from}–${local.to}. Это не год конкретного автомобиля.`:''}</p>`:''}`;
         if(/indirect/i.test(decoded.TPMS||'')){show(prefix+'<p>Декодер указал косвенную TPMS. Радиодатчики без дополнительной проверки не предлагаем.</p>');return;}
         const warnings=String(decoded.ErrorCode||'0').split(',').some(x=>x.trim()&&x.trim()!=='0');
         if(warnings&&decoded.LocalVehicle?.confidence!=='exact-type'){show(prefix+'<p>Декодер вернул неполные или противоречивые данные. Автоматический подбор заблокирован.</p><a class="primary-button" href="https://prodat4iki.ru/contacts">Сверить VIN со специалистом</a>');return;}
-        if(!/^direct$/i.test(decoded.TPMS||'')){
-          show(prefix+'<p>Автомобиль распознан, но тип TPMS по VIN не подтверждён. Нельзя определить наличие радиодатчиков и нужный протокол только по марке и году. Уточните комплектацию и OE-номер у специалиста либо перейдите к применяемости по автомобилю.</p><button class="primary-button" type="button" id="kitClarify">Подбор по автомобилю</button><a class="primary-button" href="https://prodat4iki.ru/contacts">Сверить комплектацию</a>');
-          $('#kitClarify').addEventListener('click',()=>switchTab('car'));return;
-        }
         const vehicle=index&&resolveDecoded(decoded);
-        if(!vehicle||vehicle.needsModel){
-          if(vehicle){make.value=vehicle.make;setupModels();}
-          show(prefix+'<p>Точного совпадения модели и года в справочнике нет либо несколько поколений подходят. Уточните модель во вкладке «По автомобилю» или обратитесь к специалисту.</p><button class="primary-button" type="button" id="kitClarify">Уточнить модель автомобиля</button><a class="primary-button" href="https://prodat4iki.ru/contacts">Связаться со специалистом</a>');
-          $('#kitClarify').addEventListener('click',()=>switchTab('car'));return;
+        if(!vehicle||vehicle.needsModel||vehicle.needsYear||!/^direct$/i.test(decoded.TPMS||'')){
+          const text=vehicle?.needsYear?'Точный год не определён. Укажите год по документам и проверьте поколение модели.':vehicle?.needsModel?'В каталоге нет однозначного совпадения модели: уточните модель и поколение.':'Тип TPMS и OE-номер не подтверждены. По каталогу можно посмотреть кандидатов, но не гарантировать совместимость комплектации.';
+          show(prefix+`<p>${esc(text)} Применяемость из описаний товаров не заменяет проверку установленного датчика.</p><button class="primary-button" type="button" id="kitClarify">Уточнить автомобиль</button><a class="primary-button" href="https://prodat4iki.ru/contacts">Сверить комплектацию</a>`);
+          $('#kitClarify').addEventListener('click',()=>clarifyVehicle(vehicle,$('#vinRegion').value));return;
         }
         vehicle.market=$('#vinRegion').value;
         await renderProducts(vehicle,prefix);

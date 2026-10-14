@@ -17,6 +17,8 @@ function run(...args) {
   return JSON.parse(output);
 }
 let content = JSON.parse(await fs.readFile(work,'utf8'));
+const cartSection=content.pages.find(p=>p.alias==='cart').layout.find(s=>s.widget==='YandexKit.ShoppingCart');
+run('section','set','--work',work,'--id',cartSection.id,'--settings-file',path.join(workspace,'settings/cart.json'));
 const pages = Object.fromEntries(content.pages.filter(p=>p.variant_type==='default'&&p.alias).map(p=>[p.alias,p.id]));
 for(const route of ['services','contacts','selection']) {
   const p=content.pages.find(p=>p.pattern==='/'+route);
@@ -74,3 +76,7 @@ await add('delivery','delivery');
 await add('payment','intro',{eyebrow:'ОФОРМЛЕНИЕ ЗАКАЗА',title:'Оплата заказа',description:'Доступные способы оплаты отображаются при оформлении заказа в KIT. Если нужного варианта нет, свяжитесь с нами до оплаты — подскажем порядок оформления.',buttonText:'Перейти в корзину',buttonUrl:'/cart'});
 const finalContent=JSON.parse(await fs.readFile(work,'utf8'));
 console.log(`Prepared ${finalContent.pages.reduce((n,p)=>n+p.layout.filter(s=>s.widget==='YandexKit.Mystique').length,0)} custom section copies; nothing published.`);
+// New sections append after chrome. Constructor preview visually sorts chrome,
+// but production renders layout order: normalize before the publication gate.
+execFileSync(process.execPath,[path.join(repo,'kit/native-catalog.mjs'),workspace,toolsDir],{stdio:'inherit'});
+execFileSync(process.execPath,[path.join(repo,'kit/normalize-layout.mjs'),workspace,toolsDir],{stdio:'inherit'});

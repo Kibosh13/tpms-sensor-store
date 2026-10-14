@@ -1,6 +1,9 @@
 {
   "store": "kit3917",
-  "state": "prepared-for-final-preview",
+  "state": "published",
+  "activeVersion": 120,
+  "previewVersion": 113,
+  "catalogRendering": "native ProductsListing, 24 products per page",
   "templates": {
     "intro": "01a13af0-e0ef-75dc-92be-d491fde14f99",
     "hero": "01a13b31-bccb-761a-b756-0f363c7f6bfe",

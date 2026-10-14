@@ -1,6 +1,6 @@
 {
   "store": "kit3917",
-  "state": "workspace-only",
+  "state": "published-version-120",
   "pages": {
     "404": "0196ecfe-965e-7b4e-9ab9-c3013e4a83c2",
     "accountLoyalty": "0195f219-0982-762f-93a8-82eac0aa2f2c",
@@ -33,8 +33,8 @@
     "search": "0195f1e3-b8de-7fcf-aa06-90d9198380a2",
     "subscription": "019cffd3-ae00-70d0-8bb7-9d6e771f7bc8",
     "unsubscribe": "019cbe96-ff28-7a31-8d45-7fb128a3c9e1",
-    "services": "dc0321ba-4d47-446d-a424-0974375506a2",
-    "contacts": "b6c0550b-0288-451e-a8e3-75e48f63d86d",
-    "selection": "be5ad4a0-ac55-4030-8dd1-6fd934c177ac"
+    "services": "4ea1c3ce-264d-4696-ae42-e8e9c92c6183",
+    "contacts": "5f4234ef-6529-4bcf-afc2-60843cd71101",
+    "selection": "e54f2911-d14e-4e19-90db-37f12f02465f"
   }
 }

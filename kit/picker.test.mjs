@@ -24,6 +24,13 @@ assert.equal(typeof query('#vinForm').events.submit,'function','VIN handler must
 query('#vinInput').value='AAAAAAAAAAAAAAAAA';let prevented=false;
 await query('#vinForm').events.submit({preventDefault(){prevented=true;}});
 assert.equal(prevented,true);assert.equal(requests.length,1,'Invalid VIN must not be sent to a decoder');
+// Synthetic serial; do not publish the customer's complete vehicle identifier.
+const mercedes=await ctx.TpmsVinDecoder.decodeVin('WDB2100261B000001');
+assert.equal(mercedes.LocalVehicle.modification,'E 320 CDI');
+assert.equal(mercedes.LocalVehicle.series,'W210');
+assert.equal(mercedes.ModelYear,'','Do not interpret the European VIN steering digit as model year');
+assert.equal(requests.length,1,'A known manufacturer code must work locally without vPIC');
+assert.equal(ctx.TpmsVinDecoder.localDecode('WDB9999991B359440').ModelYear,'');
 resolveIndex();await new Promise(resolve=>setImmediate(resolve));
 assert.equal(query('#vehicleMake').disabled,false);
 let selected;
@@ -45,6 +52,13 @@ assert.ok(query('#selectionResult').innerHTML.includes(vehicle.make));
 query('#vehicleModel').value='MODEL NOT IN CATALOG';
 await query('#vehicleForm').events.submit({preventDefault(){}});
 assert.ok(query('#selectionResult').innerHTML.includes('нет совпадения'));
+ctx.TpmsVinDecoder={...ctx.TpmsVinDecoder,decodeVin:async()=>({Make:'Toyota',Model:'Camry',ModelYear:'2020',TPMS:'Direct',ErrorCode:'0',DecodeSource:'vpic'})};
+query('#vinInput').value='WDB2100261B000001';query('#vinRegion').value='eu';
+await query('#vinForm').events.submit({preventDefault(){}});
+assert.ok(query('#selectionResult').innerHTML.includes('Camry VIII (XV70)'), 'Resolve a generic decoder family to exactly one catalog generation in the decoded year');
+ctx.TpmsVinDecoder={...ctx.TpmsVinDecoder,decodeVin:async()=>({Make:'Toyota',Model:'Camry',ModelYear:'2016',TPMS:'Direct',ErrorCode:'0',DecodeSource:'vpic'})};
+await query('#vinForm').events.submit({preventDefault(){}});
+assert.ok(query('#selectionResult').innerHTML.includes('нет однозначного совпадения'), 'Two Camry trim/generation candidates must remain ambiguous');
 const html=await fs.readFile(path.join(repo,'site/kit-selection.html'),'utf8');
 assert.ok(!html.includes('common.js'),'Do not expose the demo cart in the KIT picker');
 assert.ok(html.includes('noindex, nofollow'));
