@@ -1,0 +1,27 @@
+{
+  "state": "published",
+  "baseVersion": 120,
+  "proposalVersion": 125,
+  "activeVersion": 127,
+  "retiredReviewTemplates": {
+    "heroV2": "01a13e6c-2d5c-7bcf-aaaa-c4e85cc7b06e",
+    "shelfV2": "01a13e6c-2d02-7e7d-9339-ea4c234def15",
+    "shelfV3": "01a13e6e-f9bd-705e-bda1-b8b7694c145c"
+  },
+  "templates": {
+    "intro": "01a13e6c-2d57-71ce-bc16-5fd715a9383e",
+    "hero": "01a13e73-3682-7157-bbf1-08294ca37a5c",
+    "services": "01a13e6c-2d1f-7dde-ac69-20f0f4414453",
+    "delivery": "01a13e6c-2dca-7d04-92cb-03128a76dccf",
+    "contacts": "01a13e6c-2d6c-7599-9d4c-cd27a5a30bb4",
+    "shelf": "01a13e73-3667-75a5-84cb-847c2d6cc8d5"
+  },
+  "sourceTemplates": {
+    "intro": "01a13af0-e0ef-75dc-92be-d491fde14f99",
+    "hero": "01a13b31-bccb-761a-b756-0f363c7f6bfe",
+    "services": "01a13af0-eaf0-79ff-9005-742e426aa70f",
+    "delivery": "01a13af0-f042-7765-b28e-ab85b007a76e",
+    "contacts": "01a13af0-f542-7504-a612-968c81d25f6e",
+    "shelf": "01a13ace-2ac9-73d2-9a42-2e91f35cc0ee"
+  }
+}
