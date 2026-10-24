@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import {parseFitments,buildIndex,isSensor,normalize} from './fitment-parser.mjs';
 assert.deepEqual(parseFitments('Toyota Camry XV50 2011, 2012, 2013')[0].years,[2011,2012,2013]);
 assert.deepEqual(parseFitments('Kia Sportage III 2010–2013')[0].years,[2010,2011,2012,2013]);
+const mazdaYears=Array.from({length:12},(_,i)=>2015+i);
+const mazdaList=parseFitments('Mazda CX-3 '+mazdaYears.join(', '))[0];
+for(const dash of ['-','–','—'])assert.deepEqual(parseFitments('Mazda CX-3 2015'+dash+'2026')[0],{...mazdaList,sourceLine:'Mazda CX-3 2015'+dash+'2026'});
 assert.equal(parseFitments('Toyota Camry XV50 2011 OEM 4260733011').length,0);
 assert.equal(parseFitments('Подходит на все автомобили с 2010 года').length,0);
 assert.equal(parseFitments('Volvo S60 (с VIN 150000) 2014, 2015')[0].condition,'S60 (с VIN 150000)');
@@ -14,4 +17,4 @@ const v={id:'1',status:'PUBLISHED',name:'Датчик давления шин',d
 assert.equal(buildIndex({coverage:'complete',received:1,items:[v]}).products[0].availableAtExport,false);
 assert.equal(buildIndex({coverage:'complete',received:1,items:[{...v,status:'HIDDEN'}]}).products.length,0);
 assert.equal(buildIndex({coverage:'complete',received:1,items:[{...v,relative_link_url:'https://other.invalid/'}]}).products.length,0);
-console.log('Fitment parser: 13 checks passed.');
+console.log('Fitment parser: 16 checks passed, including equivalent Mazda CX-3 year lists and ranges.');

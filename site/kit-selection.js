@@ -37,14 +37,14 @@
   }
   async function renderProducts(vehicle,prefix='') {
     let products;
-    try{products=await findProducts(vehicle);}catch{notice('Не удалось загрузить применяемость','Повторите подбор позже или свяжитесь со специалистом. Без справочника товар не предлагаем.');return;}
+    try{products=await findProducts(vehicle);}catch{notice('Не удалось загрузить данные подбора','Повторите подбор позже или свяжитесь со специалистом. Поможем проверить совместимость.');return;}
     const heading=`${vehicle.make} ${vehicle.model}, ${vehicle.year}`;
-    if(!products.length){notice(heading,'В опубликованных карточках нет совпадения с этими данными. Товар наугад не предлагаем: требуется сверка OE-номера специалистом.');return;}
+    if(!products.length){notice(heading,'В справочнике нет совпадения с выбранными данными. Поможем сверить номер оригинального датчика и подобрать замену.');return;}
     const market=vehicle.market==='eu'?'Россия / Европа':vehicle.market==='us'?'США / Канада':'не указан';
-    show(`${prefix}<small>ПРИМЕНЯЕМОСТЬ ИЗ КАТАЛОГА KIT</small><h2>${esc(heading)}</h2><p>Найдено карточек с указанной продавцом применяемостью: ${products.length}. Рынок поставки: ${esc(market)}. Экспорт не содержит полной матрицы рынков и комплектаций: частоту, OE-номер и комплектацию нужно сверить перед покупкой.</p><div class="kit-products" id="kitProductResults"></div><button type="button" class="primary-button" id="kitMore">Показать ещё</button><p class="kit-snapshot">Справочник обновлён ${esc(new Date(index.exportedAt).toLocaleDateString('ru-RU'))}. Актуальные цены и наличие — в KIT. VIN в модуле не сохраняется.</p>`,'ok');
+    show(`${prefix}<small>ТОВАРЫ ДЛЯ ПРОВЕРКИ СОВМЕСТИМОСТИ</small><h2>${esc(heading)}</h2><p>По описаниям товаров найдено: ${products.length}. Рынок поставки: ${esc(market)}. Перед покупкой нужно сверить номер оригинального датчика, частоту и комплектацию автомобиля.</p><div class="kit-products" id="kitProductResults"></div><button type="button" class="primary-button" id="kitMore">Показать ещё</button><p class="kit-snapshot">Данные подбора обновлены ${esc(new Date(index.exportedAt).toLocaleDateString('ru-RU'))}. Текущие цена и наличие — в карточке товара. На этой странице VIN не сохраняется.</p>`,'ok');
     let visible=0;
     const renderMore=()=>{
-      $('#kitProductResults').insertAdjacentHTML('beforeend',products.slice(visible,visible+12).map(p=>`<article class="kit-product"><h3>${esc(p.title)}</h3><p>${esc(p.fitment.sourceLine)}</p>${p.fitment.condition?`<p class="kit-fitment-warning">Есть дополнительное условие по VIN, кузову или комплектации. Нужна ручная сверка.</p>`:''}<a href="${esc(p.url)}">Открыть товар в KIT →</a></article>`).join(''));
+      $('#kitProductResults').insertAdjacentHTML('beforeend',products.slice(visible,visible+12).map(p=>`<article class="kit-product"><h3>${esc(p.title)}</h3><p>${esc(p.fitment.sourceLine)}</p>${p.fitment.condition?`<p class="kit-fitment-warning">Есть дополнительное условие по VIN, кузову или комплектации. Нужна проверка специалистом.</p>`:''}<a href="${esc(p.url)}">Карточка товара →</a></article>`).join(''));
       visible+=12;$('#kitMore').hidden=visible>=products.length;
     };
     $('#kitMore').addEventListener('click',renderMore);renderMore();
@@ -86,7 +86,7 @@
       if(index.version!==2||index.coverage!=='complete'||!index.vehicles||!index.chunks)throw Error('invalid catalog');
       for(const [make,entries] of Object.entries(index.vehicles))models.set(make,new Map(Object.entries(entries).map(([name,years])=>[name,new Set(years)])));
       make.innerHTML=option('','Выберите марку')+[...models.keys()].sort((a,b)=>a.localeCompare(b,'ru')).map(v=>option(v)).join('');make.disabled=false;$('#vehicleForm button').disabled=false;
-    } catch { notice('Каталог временно недоступен','Справочник не загрузился. Декодирование VIN доступно, но товары без данных применяемости не покажем.'); }
+    } catch { notice('Данные подбора временно недоступны','Попробуйте позже или свяжитесь со специалистом. VIN можно проверить отдельно, но для выбора товара нужны данные о совместимости.'); }
     }
     make.addEventListener('change',setupModels);model.addEventListener('change',setupYears);year.addEventListener('change',()=>{region.disabled=!year.value;});
     $('#vehicleForm').addEventListener('submit',async event=>{event.preventDefault();const button=$('#vehicleForm button');button.disabled=true;try{if(index)await renderProducts({make:make.value,model:model.value,year:Number(year.value),market:region.value});}finally{button.disabled=false;}});
@@ -103,11 +103,11 @@
       try {
         const identity=[decoded.Make,decoded.LocalVehicle?.modification||decoded.Model,decoded.ModelYear].filter(Boolean).join(' ');
         const local=decoded.LocalVehicle;
-        const source=decoded.DecodeSource==='manufacturer-code'?'Собственная база кодов производителя. VIN не отправлялся во внешний декодер.':decoded.DecodeSource==='vpic'?'Данные vPIC дополнены локальными правилами.':'Доступны только локальные данные производителя; полного распознавания нет.';
+        const source=decoded.DecodeSource==='manufacturer-code'?'Автомобиль определён по данным производителя. VIN проверен без передачи внешнему сервису.':decoded.DecodeSource==='vpic'?'Получены сведения об автомобиле. Недостающие данные нужно уточнить перед покупкой.':'Автомобиль определён частично. Уточните модель и год выпуска.';
         const prefix=`<small>АВТОМОБИЛЬ ПО VIN</small><h2>${esc(identity||'Не удалось определить автомобиль')}</h2><p>${esc(source)}</p>${local?.series?`<p>Кузов: ${esc(local.series)} · код типа: ${esc(local.typeCode)}. ${local.from?`Период выпуска модели: ${local.from}–${local.to}. Это не год конкретного автомобиля.`:''}</p>`:''}`;
-        if(/indirect/i.test(decoded.TPMS||'')){show(prefix+'<p>Декодер указал косвенную TPMS. Радиодатчики без дополнительной проверки не предлагаем.</p>');return;}
+        if(/indirect/i.test(decoded.TPMS||'')){show(prefix+'<p>По VIN указана косвенная система контроля давления. Радиодатчики без проверки комплектации не предлагаем.</p>');return;}
         const warnings=String(decoded.ErrorCode||'0').split(',').some(x=>x.trim()&&x.trim()!=='0');
-        if(warnings&&decoded.LocalVehicle?.confidence!=='exact-type'){show(prefix+'<p>Декодер вернул неполные или противоречивые данные. Автоматический подбор заблокирован.</p><a class="primary-button" href="https://prodat4iki.ru/contacts">Сверить VIN со специалистом</a>');return;}
+        if(warnings&&decoded.LocalVehicle?.confidence!=='exact-type'){show(prefix+'<p>Сведения по VIN неполные или противоречивые. Для выбора датчика нужна проверка специалистом.</p><a class="primary-button" href="https://prodat4iki.ru/contacts">Сверить VIN со специалистом</a>');return;}
         const vehicle=index&&resolveDecoded(decoded);
         if(!vehicle||vehicle.needsModel||vehicle.needsYear||!/^direct$/i.test(decoded.TPMS||'')){
           const text=vehicle?.needsYear?'Точный год не определён. Укажите год по документам и проверьте поколение модели.':vehicle?.needsModel?'В каталоге нет однозначного совпадения модели: уточните модель и поколение.':'Тип TPMS и OE-номер не подтверждены. По каталогу можно посмотреть кандидатов, но не гарантировать совместимость комплектации.';

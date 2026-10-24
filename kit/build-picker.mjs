@@ -29,15 +29,18 @@ html=html.replace('<body>','<body data-kit-picker="true">')
   .replace('Проверить совместимость</button>','Найти по применяемости</button>')
   .replace('<script src="./common.js?v=5" defer></script>','')
   .replace('<link rel="stylesheet" href="./styles.css?v=5">','<link rel="stylesheet" href="./styles.css?v=5"><link rel="stylesheet" href="./kit-picker.css?v=1">')
-  .replace(/<script src="\.\/selection\.js\?v=\d+" defer><\/script>/,'<script src="./selection.js?v=7" defer></script><script src="./kit-selection.js?v=2" defer></script>')
-  .replace('<site-header active="selection"></site-header>','<header class="header kit-header"><div class="shell header__inner"><a class="brand" href="https://prodat4iki.ru/"><img src="./assets/logo-clean.png" alt="ProДатчики"></a><nav class="nav" aria-label="Главное меню"><a href="https://prodat4iki.ru/collections/tpms">Каталог</a><a href="https://prodat4iki.ru/services">Услуги</a><a href="https://prodat4iki.ru/contacts">Контакты</a></nav><a class="kit-cart-link" href="https://prodat4iki.ru/cart">Корзина KIT →</a></div></header>')
+  .replace(/<script src="\.\/selection\.js\?v=\d+" defer><\/script>/,'<script src="./selection.js?v=7" defer></script><script src="./kit-selection.js?v=4" defer></script>')
+  .replace('<site-header active="selection"></site-header>','<header class="header kit-header"><div class="shell header__inner"><a class="brand" href="https://prodat4iki.ru/"><img src="./assets/logo-clean.png" alt="ProДатчики"></a><nav class="nav" aria-label="Главное меню"><a href="https://prodat4iki.ru/collections/tpms">Каталог</a><a href="https://prodat4iki.ru/services">Услуги</a><a href="https://prodat4iki.ru/contacts">Контакты</a></nav><a class="kit-cart-link" href="https://prodat4iki.ru/cart">Корзина →</a></div></header>')
   .replace('<site-footer></site-footer>','<footer class="footer"><div class="shell footer__inner"><p>ProДатчики · +7 (977) 396-17-19 · ежедневно, 11:00–18:00</p><p><a href="https://prodat4iki.ru/collections/tpms">Вернуться в магазин</a></p></div></footer>')
   .replace('href="index.html"','href="https://prodat4iki.ru/"')
-  .replace('Сначала определяем автомобиль и тип системы. Товар показываем как совместимый только при подтверждённой частоте и протоколе.','Выбираем реальные товары KIT по применяемости, указанной продавцом. VIN помогает определить автомобиль; комплектацию и OE-номер проверяем перед покупкой.')
+  .replace('Сначала определяем автомобиль и тип системы. Товар показываем как совместимый только при подтверждённой частоте и протоколе.','Подобрать датчики давления шин для авто онлайн.')
+  .replace('ТОЧНЫЙ ПОДБОР TPMS','ПОДБОР ДАТЧИКОВ')
+  .replace('Декодируем автомобиль','Определяем автомобиль')
+  .replace('Производитель, модель, год и рынок поставки.','Марку, модель и год, если эти сведения доступны. Рынок поставки уточняем отдельно.')
   .replace('Сверяем TPMS','Сверяем применяемость')
-  .replace('Тип системы, частоту, протокол и способ прописки по каталогу применяемости.','Марку, модель, год и ограничения из описания конкретного товара. Неизвестные данные не подменяем догадками.')
+  .replace('Тип системы, частоту, протокол и способ прописки по каталогу применяемости.','Марку, модель, год и ограничения из описания конкретного товара. Перед покупкой проверяем комплектацию.')
   .replace('Россия / Европа — 433 МГц','Россия / Европа')
   .replace('США / Канада — 315 МГц','США / Канада')
-  .replace('VIN сначала сверяется с локальными кодами производителя, затем отправляется по HTTPS в официальный декодер vPIC NHTSA. На сайте номер не сохраняется.','VIN сначала проверяется в собственной базе кодов производителя. Если точной записи нет, используется vPIC NHTSA по HTTPS. Модуль не сохраняет VIN. Год и комплектация, не закодированные в VIN, требуют уточнения.');
+  .replace('VIN сначала сверяется с локальными кодами производителя, затем отправляется по HTTPS в официальный декодер vPIC NHTSA. На сайте номер не сохраняется. Рынок поставки проверяется отдельно: страна сборки его не заменяет.','VIN проверяется по данным производителя. Если их недостаточно, номер передаётся во внешний сервис расшифровки. На этой странице VIN не сохраняется. Год, комплектацию и рынок поставки при необходимости уточняем отдельно.');
 await fs.writeFile(path.join(repo,'site/kit-selection.html'),html);
 console.log(JSON.stringify({publishedRead:index.publishedVariantsRead,productsWithParsedFitment:index.products.length,fitmentRows:index.products.reduce((s,p)=>s+p.fitments.length,0),available:index.products.filter(p=>p.availableAtExport).length,generated:['site/kit-fitment-index.json','site/kit-fitment/','site/kit-selection.html']},null,2));
